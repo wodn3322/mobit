@@ -41,6 +41,7 @@
     <string name="transaction_title">도지코인(DOGE)</string>
     <string name="transaction_buy">매수</string>
     <string name="transaction_sell">매도</string>
+    <string name="transaction_info">정보</string>
     <string name="transaction_can_order">주문가능</string>
     <string name="transaction_order_count">수량</string>
     <string name="transaction_order_price">가격</string>

@@ -134,6 +134,20 @@
                     android:textColor="@color/transaction_sell_button_selector_color"
                     android:textSize="18sp"
                     android:textStyle="bold" />
+
+                <RadioButton
+                    android:id="@+id/coinInfoBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/transaction_button_background"
+                    android:button="@drawable/transaction_button_background"
+                    android:checked="false"
+                    android:gravity="center"
+                    android:text="@string/transaction_info"
+                    android:textColor="@color/transaction_info_button_selector_color"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
             </RadioGroup>
 
             <FrameLayout

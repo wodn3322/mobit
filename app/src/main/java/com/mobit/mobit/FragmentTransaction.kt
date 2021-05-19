@@ -19,6 +19,7 @@ class FragmentTransaction : Fragment() {
     // Fragment 변수 시작
     val fragmentBuy: Fragment = FragmentBuy()
     val fragmentSell: Fragment = FragmentSell()
+    val fragmentCoinInfo: Fragment = FragmentCoinInfo()
     // Fragment 변수 끝
 
     // UI 변수 시작
@@ -49,6 +50,9 @@ class FragmentTransaction : Fragment() {
                         }
                         R.id.coinSellBtn -> {
                             replaceFragment(fragmentSell)
+                        }
+                        R.id.coinInfoBtn -> {
+                            replaceFragment(fragmentCoinInfo)
                         }
                         else -> {
                             Log.e("FragmentTransaction", "Radio Group Error")
