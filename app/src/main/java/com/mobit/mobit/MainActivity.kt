@@ -56,6 +56,11 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        upbitAPIThread = UpbitAPIThread(100, codes)
+        upbitAPIThread.start()
+
+
+
         initData()
         init()
     }
@@ -129,8 +134,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        upbitAPIThread = UpbitAPIThread(100, codes)
-        upbitAPIThread.start()
+        (fragmentCoinList as FragmentCoinList).listener =
+            object : FragmentCoinList.OnFragmentInteraction {
+                override fun showTransaction() {
+                    binding.bottomNavBar.selectedItemId = R.id.menu_transaction
+                }
+            }
     }
 
     fun replaceFragment(fragment: Fragment) {

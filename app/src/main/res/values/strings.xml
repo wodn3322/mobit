@@ -20,6 +20,10 @@
     <string name="coin_diff">전일대비</string>
     <string name="coin_transaction_payment">거래대금</string>
 
+    <!--    about fragment_coin_list's popupmenu-->
+    <string name="showChart">차트보기</string>
+    <string name="doTrade">매수/매도</string>
+
     <!--    about fragment_investment-->
     <string name="investment_title">투자내역</string>
     <string name="investment_tab1">보유코인</string>

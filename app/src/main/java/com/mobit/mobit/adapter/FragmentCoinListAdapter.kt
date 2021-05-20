@@ -4,6 +4,8 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mobit.mobit.R
@@ -14,7 +16,7 @@ class FragmentCoinListAdapter(
     var items: ArrayList<CoinInfo>,
     var filteredItems: ArrayList<CoinInfo>
 ) :
-    RecyclerView.Adapter<FragmentCoinListAdapter.ViewHolder>() {
+    RecyclerView.Adapter<FragmentCoinListAdapter.ViewHolder>(), Filterable {
 
     var listener: OnItemClickListener? = null
 
@@ -35,6 +37,19 @@ class FragmentCoinListAdapter(
             realTimePrice = itemView.findViewById(R.id.realTimePrice)
             changeRate = itemView.findViewById(R.id.changeRate)
             totalTradePrice = itemView.findViewById(R.id.totalTradePrice)
+
+            val clickListener: View.OnClickListener = object : View.OnClickListener {
+                override fun onClick(v: View?) {
+                    if (v != null) {
+                        listener?.onItemClicked(v, filteredItems[adapterPosition])
+                    }
+                }
+            }
+            korCoinName.setOnClickListener(clickListener)
+            engCoinName.setOnClickListener(clickListener)
+            realTimePrice.setOnClickListener(clickListener)
+            changeRate.setOnClickListener(clickListener)
+            totalTradePrice.setOnClickListener(clickListener)
         }
     }
 
@@ -70,5 +85,38 @@ class FragmentCoinListAdapter(
 
     override fun getItemCount(): Int {
         return filteredItems.size
+    }
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val str: String = constraint.toString()
+
+                if (str.isNullOrBlank()) {
+                    filteredItems = items
+                } else {
+                    val filteringList: ArrayList<CoinInfo> = ArrayList()
+                    for (coinInfo in items) {
+                        val coinName = coinInfo.name
+                        if (coinName.contains(str)) {
+                            filteringList.add(coinInfo)
+                        }
+                    }
+                    filteredItems = filteringList
+                }
+                val result: FilterResults = FilterResults()
+                result.values = filteredItems
+
+                return result
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                if (results != null) {
+                    filteredItems = results.values as ArrayList<CoinInfo>
+                    notifyDataSetChanged()
+                }
+            }
+
+        }
     }
 }

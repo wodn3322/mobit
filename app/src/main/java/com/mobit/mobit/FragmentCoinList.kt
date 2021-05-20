@@ -1,9 +1,11 @@
 package com.mobit.mobit
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,6 +26,12 @@ class FragmentCoinList : Fragment() {
     val myViewModel: MyViewModel by activityViewModels()
     val coinInfo: ArrayList<CoinInfo> = ArrayList()
     lateinit var adapter: FragmentCoinListAdapter
+
+    var listener: OnFragmentInteraction? = null
+
+    interface OnFragmentInteraction {
+        fun showTransaction()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,7 +54,9 @@ class FragmentCoinList : Fragment() {
         adapter = FragmentCoinListAdapter(coinInfo, coinInfo)
         adapter.listener = object : FragmentCoinListAdapter.OnItemClickListener {
             override fun onItemClicked(view: View, coinInfo: CoinInfo) {
-
+                myViewModel.setSelectedCoin(coinInfo.code)
+                listener?.showTransaction()
+                Log.i("Clicked Coin", coinInfo.code)
             }
         }
 
@@ -55,6 +65,18 @@ class FragmentCoinList : Fragment() {
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             recyclerView.adapter = adapter
 
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    adapter.filter.filter(query)
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    adapter.filter.filter(newText)
+                    return true
+                }
+
+            })
         }
     }
 
