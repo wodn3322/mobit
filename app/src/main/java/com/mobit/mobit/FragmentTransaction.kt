@@ -91,7 +91,7 @@ class FragmentTransaction : Fragment() {
                         "FALL" -> "▼"
                         else -> ""
                     } + changeFormatter.format(coin!!.price.changePrice)
-                    
+
 
                     setTextViewColor(coin!!)
                 }
