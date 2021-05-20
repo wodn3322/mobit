@@ -1,10 +1,12 @@
 package com.mobit.mobit.data
 
+import java.io.Serializable
+
 data class CoinInfo(
     val code: String,       // 코인 코드
     val name: String,       // 코인 이름
     val price: Price        // 코인 현재가 정보
-) {
+) : Serializable {
     companion object {
         val BTC_CODE = "KRW-BTC"        // 비트코인
         val BTC_NAME = "비트코인"

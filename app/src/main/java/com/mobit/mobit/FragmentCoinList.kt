@@ -6,6 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.mobit.mobit.adapter.FragmentCoinListAdapter
+import com.mobit.mobit.data.CoinInfo
 import com.mobit.mobit.data.MyViewModel
 import com.mobit.mobit.databinding.FragmentCoinListBinding
 
@@ -19,6 +22,8 @@ class FragmentCoinList : Fragment() {
     // UI 변수 끝
 
     val myViewModel: MyViewModel by activityViewModels()
+    val coinInfo: ArrayList<CoinInfo> = ArrayList()
+    lateinit var adapter: FragmentCoinListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,7 +37,25 @@ class FragmentCoinList : Fragment() {
     }
 
     fun init() {
+        myViewModel.coinInfo.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            coinInfo.clear()
+            coinInfo.addAll(myViewModel.coinInfo.value!!)
+            adapter.notifyDataSetChanged()
+        })
 
+        adapter = FragmentCoinListAdapter(coinInfo, coinInfo)
+        adapter.listener = object : FragmentCoinListAdapter.OnItemClickListener {
+            override fun onItemClicked(view: View, coinInfo: CoinInfo) {
+
+            }
+        }
+
+        binding.apply {
+            recyclerView.layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            recyclerView.adapter = adapter
+
+        }
     }
 
 }

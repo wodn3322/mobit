@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 class MyViewModel : ViewModel() {
 
     // FragmentCoinList에서 선택한 코인을 다른 Fragment에서 참고할 때 사용하는 변수
-    val selectedCoin: MutableLiveData<CoinInfo> = MutableLiveData()
+    val selectedCoin: MutableLiveData<String> = MutableLiveData()
 
     // 실시간으로 얻어온 코인 정보를 저장할 변수
     val coinInfo: MutableLiveData<ArrayList<CoinInfo>> = MutableLiveData()
@@ -17,7 +17,7 @@ class MyViewModel : ViewModel() {
     // 사용자가 매수 또는 매도를 진행할 때마다, 거래 내역을 저장할 변수
     val transaction: MutableLiveData<ArrayList<Transaction>> = MutableLiveData()
 
-    fun setSelectedCoin(selectedCoin: CoinInfo) {
+    fun setSelectedCoin(selectedCoin: String) {
         this.selectedCoin.value = selectedCoin
     }
 
