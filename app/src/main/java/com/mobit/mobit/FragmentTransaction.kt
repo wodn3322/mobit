@@ -1,5 +1,6 @@
 package com.mobit.mobit
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -65,6 +66,8 @@ class FragmentTransaction : Fragment() {
                         "FALL" -> "▼"
                         else -> ""
                     } + changeFormatter.format(coin!!.price.changePrice)
+
+                    setTextViewColor(coin!!)
                 }
             }
         })
@@ -88,6 +91,9 @@ class FragmentTransaction : Fragment() {
                         "FALL" -> "▼"
                         else -> ""
                     } + changeFormatter.format(coin!!.price.changePrice)
+                    
+
+                    setTextViewColor(coin!!)
                 }
             }
         })
@@ -120,6 +126,24 @@ class FragmentTransaction : Fragment() {
             childFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frameLayout, fragment)
         fragmentTransaction.commit()
+    }
+
+    fun setTextViewColor(coinInfo: CoinInfo) {
+        binding.apply {
+            if (coinInfo.price.changeRate > 0) {
+                coinPrice.setTextColor(Color.parseColor("#bd4e3a"))
+                coinRate.setTextColor(Color.parseColor("#bd4e3a"))
+                coinDiff.setTextColor(Color.parseColor("#bd4e3a"))
+            } else if (coinInfo.price.changeRate < 0) {
+                coinPrice.setTextColor(Color.parseColor("#135fc1"))
+                coinRate.setTextColor(Color.parseColor("#135fc1"))
+                coinDiff.setTextColor(Color.parseColor("#135fc1"))
+            } else {
+                coinPrice.setTextColor(Color.parseColor("#FFFFFF"))
+                coinRate.setTextColor(Color.parseColor("#FFFFFF"))
+                coinDiff.setTextColor(Color.parseColor("#FFFFFF"))
+            }
+        }
     }
 
 }
