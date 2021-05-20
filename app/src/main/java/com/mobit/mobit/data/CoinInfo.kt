@@ -17,7 +17,7 @@ data class CoinInfo(
         val XRP_CODE = "KRW-XRP"        // 리플
         val XRP_NAME = "리플"
         val DOT_CODE = "KRW-DOT"        // 폴카닷
-        val DOT_NAMe = "폴카닷"
+        val DOT_NAME = "폴카닷"
         val BCH_CODE = "KRW-BCH"        // 비트코인캐시
         val BCH_NAME = "비트코인캐시"
         val LTC_CODE = "KRW-LTC"        // 라이트코인
