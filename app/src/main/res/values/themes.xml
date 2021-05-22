@@ -25,4 +25,8 @@
     <style name="SpinnerwithNoArrow" parent="@android:style/Widget.Spinner">
         <item name="android:background">@color/main_background</item>
     </style>
+
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash</item>
+    </style>
 </resources>

@@ -8,6 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="splash_background">#093687</color>
     <color name="main_background">#061222</color>
     <color name="main_bottom_nav">#08275d</color>
     <color name="coin_list_gray">#848b95</color>

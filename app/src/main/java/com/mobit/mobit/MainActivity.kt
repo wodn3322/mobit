@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity() {
     // 뒤로가기 두번 누르면 앱 종료 관련 변수 끝
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.Theme_Mobit)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
