@@ -105,6 +105,7 @@ class MainActivity : AppCompatActivity() {
 
     fun initData() {
         myViewModel.setSelectedCoin(CoinInfo.BTC_CODE)
+        myViewModel.setFavoriteCoinInfo(ArrayList<CoinInfo>())
     }
 
     fun init() {

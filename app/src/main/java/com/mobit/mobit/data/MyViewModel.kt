@@ -11,6 +11,9 @@ class MyViewModel : ViewModel() {
     // 실시간으로 얻어온 코인 정보를 저장할 변수
     val coinInfo: MutableLiveData<ArrayList<CoinInfo>> = MutableLiveData()
 
+    // 사용자가 즐겨찾기에 추가한 코인 정보를 저장할 변수
+    val favoriteCoinInfo: MutableLiveData<ArrayList<CoinInfo>> = MutableLiveData()
+
     // 사용자가 보유중인 자산 정보를 저장할 변수
     val asset: MutableLiveData<Asset> = MutableLiveData()
 
@@ -25,6 +28,10 @@ class MyViewModel : ViewModel() {
         this.coinInfo.value = coinInfo
     }
 
+    fun setFavoriteCoinInfo(favoriteCoinInfo: ArrayList<CoinInfo>) {
+        this.favoriteCoinInfo.value = favoriteCoinInfo
+    }
+
     fun setAsset(asset: Asset) {
         this.asset.value = asset
     }
@@ -35,5 +42,25 @@ class MyViewModel : ViewModel() {
 
     fun addTransaction(transaction: Transaction) {
         this.transaction.value?.add(transaction)
+    }
+
+    fun addFavoriteCoinInfo(coinInfo: CoinInfo): Boolean {
+        if (favoriteCoinInfo.value == null)
+            return false
+
+        if (favoriteCoinInfo.value!!.contains(coinInfo))
+            return false
+
+        return favoriteCoinInfo.value!!.add(coinInfo)
+    }
+
+    fun removeFavoriteCoinInfo(coinInfo: CoinInfo): Boolean {
+        if (favoriteCoinInfo.value == null)
+            return false
+
+        if (!favoriteCoinInfo.value!!.contains(coinInfo))
+            return false
+
+        return favoriteCoinInfo.value!!.remove(coinInfo)
     }
 }

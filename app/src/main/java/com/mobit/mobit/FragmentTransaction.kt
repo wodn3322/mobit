@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -114,6 +115,50 @@ class FragmentTransaction : Fragment() {
                         }
                         else -> {
                             Log.e("FragmentTransaction", "Radio Group Error")
+                        }
+                    }
+                }
+            })
+
+            // 코인이 관심목록에 등록되어 있는 경우에는 ImageButton을 채워진 별로 변경해야 한다.
+            var coin: CoinInfo? = null
+            for (coinInfo in myViewModel.favoriteCoinInfo.value!!) {
+                if (coinInfo.code == myViewModel.selectedCoin.value!!) {
+                    coin = coinInfo
+                    break
+                }
+            }
+            if (coin != null) {
+                favoriteBtn.setImageResource(R.drawable.ic_round_star_24)
+            }
+
+            favoriteBtn.setOnClickListener(object : View.OnClickListener {
+                override fun onClick(v: View?) {
+                    var coin: CoinInfo? = null
+                    for (coinInfo in myViewModel.favoriteCoinInfo.value!!) {
+                        if (coinInfo.code == myViewModel.selectedCoin.value!!) {
+                            coin = coinInfo
+                            break
+                        }
+                    }
+                    // 즐겨찾기에 이미 추가되어 있는 경우
+                    if (coin != null) {
+                        if (myViewModel.removeFavoriteCoinInfo(coin!!)) {
+                            favoriteBtn.setImageResource(R.drawable.ic_round_star_border_24)
+                            Toast.makeText(context, "관심코인에서 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    // 즐겨찾기에 추가되어 있지 않은 경우
+                    else {
+                        for (coinInfo in myViewModel.coinInfo.value!!) {
+                            if (coinInfo.code == myViewModel.selectedCoin.value!!) {
+                                coin = coinInfo
+                                break
+                            }
+                        }
+                        if (myViewModel.addFavoriteCoinInfo(coin!!)) {
+                            favoriteBtn.setImageResource(R.drawable.ic_round_star_24)
+                            Toast.makeText(context, "관심코인으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
