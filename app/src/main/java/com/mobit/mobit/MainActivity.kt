@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.mobit.mobit.data.CoinInfo
 import com.mobit.mobit.data.MyViewModel
+import com.mobit.mobit.data.OrderBook
 import com.mobit.mobit.databinding.ActivityMainBinding
 import com.mobit.mobit.network.UpbitAPICaller
 import java.util.*
@@ -31,8 +32,13 @@ class MainActivity : AppCompatActivity() {
     val myViewModel: MyViewModel by viewModels<MyViewModel>()
     val upbitAPICaller: UpbitAPICaller = UpbitAPICaller()
     val upbitAPIHandler: UpbitAPIHandler = UpbitAPIHandler()
+
+    // 코인 정보 가져오는 쓰레드
     lateinit var upbitAPIThread: UpbitAPIThread
-    var threadFlag: Boolean = true
+
+    // 코인 호가 정보 가져오는 쓰레드
+    lateinit var upbitAPIThread2: UpbitAPIThread
+
     val codes: ArrayList<String> = arrayListOf(
         CoinInfo.BTC_CODE,
         CoinInfo.ETH_CODE,
@@ -59,8 +65,8 @@ class MainActivity : AppCompatActivity() {
 
         upbitAPIThread = UpbitAPIThread(100, codes)
         upbitAPIThread.start()
-
-
+        upbitAPIThread2 = UpbitAPIThread(200, codes)
+        upbitAPIThread2.start()
 
         initData()
         init()
@@ -82,22 +88,25 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         upbitAPIThread.threadStop(true)
+        upbitAPIThread2.threadStop(true)
     }
 
     override fun onRestart() {
         super.onRestart()
-        upbitAPIThread.threadStop(false)
         val thread: Thread = object : Thread() {
             override fun run() {
                 if (upbitAPIThread.isAlive) {
                     try {
                         upbitAPIThread.join()
+                        upbitAPIThread2.join()
                     } catch (e: InterruptedException) {
                         Log.e("OnRestart Error", e.toString())
                     }
                 }
                 upbitAPIThread = UpbitAPIThread(100, codes)
                 upbitAPIThread.start()
+                upbitAPIThread2 = UpbitAPIThread(200, codes)
+                upbitAPIThread2.start()
             }
         }
         thread.start()
@@ -106,6 +115,7 @@ class MainActivity : AppCompatActivity() {
     fun initData() {
         myViewModel.setSelectedCoin(CoinInfo.BTC_CODE)
         myViewModel.setFavoriteCoinInfo(ArrayList<CoinInfo>())
+        myViewModel.setOrderBook(ArrayList<OrderBook>())
     }
 
     fun init() {
@@ -163,20 +173,8 @@ class MainActivity : AppCompatActivity() {
                     val coinInfo = bundle.getSerializable("coinInfo") as ArrayList<CoinInfo>
                     myViewModel.setCoinInfo(coinInfo)
                 } else if (type == 200 && isSuccess) {
-                    for (i in 0..codes.size - 1) {
-                        myViewModel.coinInfo.value!![i].price.bidTotalSize =
-                            upbitAPICaller.bidTotalSize.get(codes[i])!!
-                        myViewModel.coinInfo.value!![i].price.askTotalSize =
-                            upbitAPICaller.askTotalSize.get(codes[i])!!
-                        myViewModel.coinInfo.value!![i].price.bidPrice =
-                            upbitAPICaller.bidPrice.get(codes[i])!!
-                        myViewModel.coinInfo.value!![i].price.bidSize =
-                            upbitAPICaller.bidSize.get(codes[i])!!
-                        myViewModel.coinInfo.value!![i].price.askPrice =
-                            upbitAPICaller.askPrice.get(codes[i])!!
-                        myViewModel.coinInfo.value!![i].price.askSize =
-                            upbitAPICaller.askSize.get(codes[i])!!
-                    }
+                    val orderBook = bundle.getSerializable("orderBook") as ArrayList<OrderBook>
+                    myViewModel.setOrderBook(orderBook)
                 }
             }
         }
@@ -208,7 +206,9 @@ class MainActivity : AppCompatActivity() {
                 // 호가 정보 받아오기
                 else if (type == 200) {
                     bundle.putInt("type", type)
-                    if (upbitAPICaller.getOrderbook(codes)) {
+                    val orderBook = upbitAPICaller.getOrderbook(myViewModel.selectedCoin.value!!)
+                    if (orderBook.isNotEmpty()) {
+                        bundle.putSerializable("orderBook", orderBook)
                         bundle.putBoolean("isSuccess", true)
                     } else {
                         bundle.putBoolean("isSuccess", false)

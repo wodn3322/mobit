@@ -16,4 +16,8 @@
     <color name="coin_list_red">#bd4e3a</color>
     <color name="asset_background">#0d182a</color>
     <color name="transaction_background">#152131</color>
+    <color name="transaction_red">#bd4e3a</color>
+    <color name="transaction_blue">#135fc1</color>
+    <color name="transaction_recyclerview_background_blue">#081d3a</color>
+    <color name="transaction_recyclerview_background_red">#241a23</color>
 </resources>

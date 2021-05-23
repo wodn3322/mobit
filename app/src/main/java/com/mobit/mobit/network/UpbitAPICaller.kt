@@ -1,6 +1,7 @@
 package com.mobit.mobit.network
 
 import android.util.Log
+import com.mobit.mobit.data.OrderBook
 import com.mobit.mobit.data.Price
 import org.json.JSONArray
 import java.io.BufferedReader
@@ -15,13 +16,6 @@ Upbit open API를 사용해서 데이터를 얻어오는 작업을 구현할 클
 class UpbitAPICaller {
 
     companion object {
-        val CALL_TICKER = 100
-        val CALL_ORDERBOOK = 200
-        val CALL_CANDLE_MINUTE = 300
-        val CALL_CANDLE_DAY = 400
-        val CALL_CANDLE_WEEK = 500
-        val CALL_CANDLE_MONTH = 600
-
         val TICK_URL = "https://api.upbit.com/v1/trades/ticks"
         val TICKER_URL = "https://api.upbit.com/v1/ticker"
         val ORDERBOOK_URL = "https://api.upbit.com/v1/orderbook"
@@ -30,14 +24,6 @@ class UpbitAPICaller {
         val CANDLE_WEEK_URL = "https://api.upbit.com/v1/candles/weeks"
         val CANDLE_MONTH_URL = "https://api.upbit.com/v1/candles/months"
     }
-
-    var orderbooks: JSONArray? = null
-    var bidPrice: HashMap<String, ArrayList<Double>> = HashMap()
-    var bidSize: HashMap<String, ArrayList<Double>> = HashMap()
-    var askPrice: HashMap<String, ArrayList<Double>> = HashMap()
-    var askSize: HashMap<String, ArrayList<Double>> = HashMap()
-    var bidTotalSize: HashMap<String, Double> = HashMap()
-    var askTotalSize: HashMap<String, Double> = HashMap()
 
     fun connect(connUrl: String): String {
         var ret = ""
@@ -98,12 +84,6 @@ class UpbitAPICaller {
             val change = jsonObject.getString("change")
             val changePrice = jsonObject.getDouble("signed_change_price")
             val changeRate = jsonObject.getDouble("signed_change_rate")
-            val bidTotalSize = -1.0
-            val askTotalSize = -1.0
-            val bidPrice = ArrayList<Double>()
-            val bidSize = ArrayList<Double>()
-            val askPrice = ArrayList<Double>()
-            val askSize = ArrayList<Double>()
             val totalTradeVolume = jsonObject.getDouble("acc_trade_volume")
             val totalTradePrice = jsonObject.getDouble("acc_trade_price")
             val totalTradePrice24 = jsonObject.getDouble("acc_trade_price_24h")
@@ -121,12 +101,6 @@ class UpbitAPICaller {
                 change,
                 changePrice,
                 changeRate,
-                bidTotalSize,
-                askTotalSize,
-                bidPrice,
-                bidSize,
-                askPrice,
-                askSize,
                 totalTradeVolume,
                 totalTradePrice,
                 totalTradePrice24,
@@ -142,52 +116,33 @@ class UpbitAPICaller {
     }
 
     // code에 해당하는 코인의 호가 정보를 가져오는 함수
-    fun getOrderbook(codes: ArrayList<String>): Boolean {
-        var markets = "?markets="
-        for (i in codes.indices) {
-            markets += when (i) {
-                codes.size - 1 -> codes[i]
-                else -> "${codes[i]}, "
-            }
-        }
-        if (markets == "?markets=")
-            return false
+    fun getOrderbook(code: String): ArrayList<OrderBook> {
+        val ret = ArrayList<OrderBook>()
 
+        val markets = "?markets=$code"
         val url = ORDERBOOK_URL + markets
         val text = connect(url)
         if (text.isBlank())
-            return false
+            return ret
 
-        orderbooks = JSONArray(text)
-        for (i in 0..orderbooks!!.length() - 1) {
-            val jsonObject = orderbooks!!.getJSONObject(i)
-            val market = jsonObject.getString("market")
-            val _bidTotalSize = jsonObject.getDouble("total_bid_size")
-            val _askTotalSize = jsonObject.getDouble("total_ask_size")
-            val orderbook = jsonObject.getJSONArray("orderbook_units")
-            val aPrice = ArrayList<Double>()
-            val aSize = ArrayList<Double>()
-            val bPrice = ArrayList<Double>()
-            val bSize = ArrayList<Double>()
-            // askPrice는 가격이 오름차순으로 정렬되어 있고,
-            // bidPrice는 가격이 내림차순으로 정렬되어 있다.
-            for (j in 0..orderbook.length() - 1) {
-                val temp = orderbook.getJSONObject(j)
-                aPrice.add(temp.getDouble("ask_price"))
-                aSize.add(temp.getDouble("ask_size"))
-                bPrice.add(temp.getDouble("bid_price"))
-                bSize.add(temp.getDouble("bid_size"))
-            }
-
-            askPrice.put(market, aPrice)
-            askSize.put(market, aSize)
-            bidPrice.put(market, bPrice)
-            bidSize.put(market, bSize)
-            askTotalSize.put(market, _askTotalSize)
-            bidTotalSize.put(market, _bidTotalSize)
+        val orderbooks = JSONArray(text)
+        val jsonObject = orderbooks!!.getJSONObject(0)
+        val market = jsonObject.getString("market")
+        val orderbook = jsonObject.getJSONArray("orderbook_units")
+        val ask = ArrayList<OrderBook>()
+        val bid = ArrayList<OrderBook>()
+        // ask(매도)는 가격이 오름차순으로 정렬되어 있고,
+        // bid(매수)는 가격이 내림차순으로 정렬되어 있다.
+        for (j in 0..orderbook.length() - 1) {
+            val temp = orderbook.getJSONObject(j)
+            ask.add(OrderBook(temp.getDouble("ask_price"), temp.getDouble("ask_size")))
+            bid.add(OrderBook(temp.getDouble("bid_price"), temp.getDouble("bid_size")))
         }
+        ask.reverse()
+        ret.addAll(ask)
+        ret.addAll(bid)
 
-        return true
+        return ret
     }
 
     // code에 해당하는 코인의 unit분 단위의 캔들 차트 정보를 가져오는 함수

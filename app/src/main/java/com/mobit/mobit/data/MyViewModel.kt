@@ -14,6 +14,9 @@ class MyViewModel : ViewModel() {
     // 사용자가 즐겨찾기에 추가한 코인 정보를 저장할 변수
     val favoriteCoinInfo: MutableLiveData<ArrayList<CoinInfo>> = MutableLiveData()
 
+    // 실시간으로 얻어온 호가 정보를 저장할 변수
+    val orderBook: MutableLiveData<ArrayList<OrderBook>> = MutableLiveData()
+
     // 사용자가 보유중인 자산 정보를 저장할 변수
     val asset: MutableLiveData<Asset> = MutableLiveData()
 
@@ -30,6 +33,10 @@ class MyViewModel : ViewModel() {
 
     fun setFavoriteCoinInfo(favoriteCoinInfo: ArrayList<CoinInfo>) {
         this.favoriteCoinInfo.value = favoriteCoinInfo
+    }
+
+    fun setOrderBook(orderBook: ArrayList<OrderBook>) {
+        this.orderBook.value = orderBook
     }
 
     fun setAsset(asset: Asset) {

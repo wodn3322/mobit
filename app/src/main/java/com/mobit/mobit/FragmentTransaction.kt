@@ -11,8 +11,11 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.mobit.mobit.adapter.FragmentTransactionAdapter
 import com.mobit.mobit.data.CoinInfo
 import com.mobit.mobit.data.MyViewModel
+import com.mobit.mobit.data.OrderBook
 import com.mobit.mobit.databinding.FragmentTransactionBinding
 import java.text.DecimalFormat
 
@@ -32,6 +35,9 @@ class FragmentTransaction : Fragment() {
     // UI 변수 끝
 
     val myViewModel: MyViewModel by activityViewModels()
+    lateinit var adapter: FragmentTransactionAdapter
+    var selectedCoin: CoinInfo? = null
+    val orderBook: ArrayList<OrderBook> = ArrayList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,62 +51,58 @@ class FragmentTransaction : Fragment() {
     }
 
     fun init() {
-        myViewModel.selectedCoin.observe(viewLifecycleOwner, Observer {
-            var coin: CoinInfo? = null
-            for (coinInfo in myViewModel.coinInfo.value!!) {
-                if (coinInfo.code == myViewModel.selectedCoin.value!!) {
-                    coin = coinInfo
-                    break
-                }
-            }
-            binding.apply {
-                if (coin != null) {
-                    val formatter = DecimalFormat("###,###")
-                    val changeFormatter = DecimalFormat("###,###.##")
-
-                    coinName.text = "${coin!!.name}(${coin!!.code.split('-')[1]})"
-                    coinPrice.text = formatter.format(coin!!.price.realTimePrice)
-                    coinRate.text = changeFormatter.format(coin!!.price.changeRate)
-                    coinDiff.text = when (coin!!.price.change) {
-                        "EVEN" -> ""
-                        "RISE" -> "▲"
-                        "FALL" -> "▼"
-                        else -> ""
-                    } + changeFormatter.format(coin!!.price.changePrice)
-
-                    setTextViewColor(coin!!)
-                }
-            }
-        })
         myViewModel.coinInfo.observe(viewLifecycleOwner, Observer {
-            var coin: CoinInfo? = null
             for (coinInfo in myViewModel.coinInfo.value!!) {
                 if (coinInfo.code == myViewModel.selectedCoin.value!!) {
-                    coin = coinInfo
+                    selectedCoin = coinInfo
                     break
                 }
             }
             binding.apply {
-                if (coin != null) {
+                if (selectedCoin != null) {
                     val formatter = DecimalFormat("###,###")
                     val changeFormatter = DecimalFormat("###,###.##")
-                    coinPrice.text = formatter.format(coin!!.price.realTimePrice)
-                    coinRate.text = changeFormatter.format(coin!!.price.changeRate)
-                    coinDiff.text = when (coin!!.price.change) {
+                    coinName.text = "${selectedCoin!!.name}(${selectedCoin!!.code.split('-')[1]})"
+                    coinPrice.text = formatter.format(selectedCoin!!.price.realTimePrice)
+                    coinRate.text = changeFormatter.format(selectedCoin!!.price.changeRate)
+                    coinDiff.text = when (selectedCoin!!.price.change) {
                         "EVEN" -> ""
                         "RISE" -> "▲"
                         "FALL" -> "▼"
                         else -> ""
-                    } + changeFormatter.format(coin!!.price.changePrice)
+                    } + changeFormatter.format(selectedCoin!!.price.changePrice)
 
-
-                    setTextViewColor(coin!!)
+                    setTextViewColor(selectedCoin!!)
                 }
             }
         })
+        myViewModel.orderBook.observe(viewLifecycleOwner, Observer {
+            orderBook.clear()
+            orderBook.addAll(myViewModel.orderBook.value!!)
+            adapter.notifyDataSetChanged()
+        })
+
+        for (coinInfo in myViewModel.coinInfo.value!!) {
+            if (coinInfo.code == myViewModel.selectedCoin.value!!) {
+                selectedCoin = coinInfo
+                break
+            }
+        }
+        adapter = FragmentTransactionAdapter(orderBook, selectedCoin!!.price.openPrice)
+        adapter.listener = object : FragmentTransactionAdapter.OnItemClickListener {
+            override fun onItemClicked(view: View, price: Double) {
+                // FragmentBuy와 FragmentSell의 현재가를 출력하는 TextView의 text를 price로 설정해야 한다.
+            }
+        }
 
         replaceFragment(fragmentBuy)
         binding.apply {
+            recyclerView.layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            recyclerView.adapter = adapter
+            // recyclerview에 있는 item들 중에서 가운데에 위치한 아이템이 화면의 중앙에 위치하도록 하고 싶은데 방법을 모르겠다.
+            recyclerView.scrollToPosition(6)
+
             buyAndSellGroup.setOnCheckedChangeListener(object : RadioGroup.OnCheckedChangeListener {
                 override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
                     when (checkedId) {
@@ -121,42 +123,22 @@ class FragmentTransaction : Fragment() {
             })
 
             // 코인이 관심목록에 등록되어 있는 경우에는 ImageButton을 채워진 별로 변경해야 한다.
-            var coin: CoinInfo? = null
-            for (coinInfo in myViewModel.favoriteCoinInfo.value!!) {
-                if (coinInfo.code == myViewModel.selectedCoin.value!!) {
-                    coin = coinInfo
-                    break
-                }
-            }
-            if (coin != null) {
+            if (myViewModel.favoriteCoinInfo.value!!.contains(selectedCoin)) {
                 favoriteBtn.setImageResource(R.drawable.ic_round_star_24)
             }
 
             favoriteBtn.setOnClickListener(object : View.OnClickListener {
                 override fun onClick(v: View?) {
-                    var coin: CoinInfo? = null
-                    for (coinInfo in myViewModel.favoriteCoinInfo.value!!) {
-                        if (coinInfo.code == myViewModel.selectedCoin.value!!) {
-                            coin = coinInfo
-                            break
-                        }
-                    }
                     // 즐겨찾기에 이미 추가되어 있는 경우
-                    if (coin != null) {
-                        if (myViewModel.removeFavoriteCoinInfo(coin!!)) {
+                    if (myViewModel.favoriteCoinInfo.value!!.contains(selectedCoin)) {
+                        if (myViewModel.removeFavoriteCoinInfo(selectedCoin!!)) {
                             favoriteBtn.setImageResource(R.drawable.ic_round_star_border_24)
                             Toast.makeText(context, "관심코인에서 삭제되었습니다.", Toast.LENGTH_SHORT).show()
                         }
                     }
                     // 즐겨찾기에 추가되어 있지 않은 경우
                     else {
-                        for (coinInfo in myViewModel.coinInfo.value!!) {
-                            if (coinInfo.code == myViewModel.selectedCoin.value!!) {
-                                coin = coinInfo
-                                break
-                            }
-                        }
-                        if (myViewModel.addFavoriteCoinInfo(coin!!)) {
+                        if (myViewModel.addFavoriteCoinInfo(selectedCoin!!)) {
                             favoriteBtn.setImageResource(R.drawable.ic_round_star_24)
                             Toast.makeText(context, "관심코인으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
                         }
