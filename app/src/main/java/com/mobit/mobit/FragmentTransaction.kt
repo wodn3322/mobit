@@ -132,7 +132,13 @@ class FragmentTransaction : Fragment() {
                     // 즐겨찾기에 이미 추가되어 있는 경우
                     if (myViewModel.favoriteCoinInfo.value!!.contains(selectedCoin)) {
                         if (myViewModel.removeFavoriteCoinInfo(selectedCoin!!)) {
-                            myViewModel.myDBHelper!!.deleteFavorite(selectedCoin!!.code)
+                            val thread = object : Thread() {
+                                override fun run() {
+                                    val flag = myViewModel.myDBHelper!!.deleteFavorite(selectedCoin!!.code)
+                                    Log.e("favorite delete", flag.toString())
+                                }
+                            }
+                            thread.start()
                             favoriteBtn.setImageResource(R.drawable.ic_round_star_border_24)
                             Toast.makeText(context, "관심코인에서 삭제되었습니다.", Toast.LENGTH_SHORT).show()
                         }
@@ -140,7 +146,13 @@ class FragmentTransaction : Fragment() {
                     // 즐겨찾기에 추가되어 있지 않은 경우
                     else {
                         if (myViewModel.addFavoriteCoinInfo(selectedCoin!!)) {
-                            myViewModel.myDBHelper!!.insertFavoirte(selectedCoin!!.code)
+                            val thread = object : Thread() {
+                                override fun run() {
+                                    val flag = myViewModel.myDBHelper!!.insertFavoirte(selectedCoin!!.code)
+                                    Log.e("favorite insert", flag.toString())
+                                }
+                            }
+                            thread.start()
                             favoriteBtn.setImageResource(R.drawable.ic_round_star_24)
                             Toast.makeText(context, "관심코인으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
                         }

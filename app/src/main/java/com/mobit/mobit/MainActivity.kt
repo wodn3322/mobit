@@ -53,7 +53,6 @@ class MainActivity : AppCompatActivity() {
         CoinInfo.LINK_CODE,
         CoinInfo.ETC_CODE
     )
-    val favoriteCodes: ArrayList<String> = ArrayList()
 
     // 뒤로가기 두번 누르면 앱 종료 관련 변수 시작
     val FINISH_INTERVAL_TIME: Long = 2000
@@ -183,14 +182,9 @@ class MainActivity : AppCompatActivity() {
                 if (type == 100 && isSuccess) {
                     val coinInfo = bundle.getSerializable("coinInfo") as ArrayList<CoinInfo>
                     myViewModel.setCoinInfo(coinInfo)
-
-                    val favoritesList = ArrayList<CoinInfo>()
-                    for (coin in coinInfo) {
-                        if (favoriteCodes.contains(coin.code)) {
-                            favoritesList.add(coin)
-                        }
-                    }
-                    myViewModel.setFavoriteCoinInfo(favoritesList)
+                    val favoriteCoinInfo =
+                        bundle.getSerializable("favoriteCoinInfo") as ArrayList<CoinInfo>
+                    myViewModel.setFavoriteCoinInfo(favoriteCoinInfo)
                 } else if (type == 200 && isSuccess) {
                     val orderBook = bundle.getSerializable("orderBook") as ArrayList<OrderBook>
                     myViewModel.setOrderBook(orderBook)
@@ -218,6 +212,17 @@ class MainActivity : AppCompatActivity() {
                         }
                         bundle.putSerializable("coinInfo", coinInfo)
                         bundle.putBoolean("isSuccess", true)
+
+                        val favoriteCoinInfo = ArrayList<CoinInfo>()
+                        for (favorite in myViewModel.favoriteCoinInfo.value!!) {
+                            for (coin in coinInfo) {
+                                if (favorite.code == coin.code) {
+                                    favoriteCoinInfo.add(coin)
+                                    break
+                                }
+                            }
+                        }
+                        bundle.putSerializable("favoriteCoinInfo", favoriteCoinInfo)
                     } else {
                         bundle.putBoolean("isSuccess", false)
                     }
@@ -273,7 +278,36 @@ class MainActivity : AppCompatActivity() {
                 val isTransaction = bundle.getBoolean("isTransactions")
 
                 if (isFavorites) {
-                    favoriteCodes.addAll(bundle.getSerializable("favorites") as ArrayList<String>)
+//                    favoriteCodes.addAll(bundle.getSerializable("favorites") as ArrayList<String>)
+                    val favorites = bundle.getSerializable("favorites") as ArrayList<String>
+                    val list = ArrayList<CoinInfo>()
+                    for (code in favorites) {
+                        list.add(
+                            CoinInfo(
+                                code,
+                                code,
+                                Price(
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    "EVEN",
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    "",
+                                    0.0,
+                                    ""
+                                )
+                            )
+                        )
+                    }
+                    myViewModel.setFavoriteCoinInfo(list)
                 }
                 if (isKrw) {
                     val krw = bundle.getDouble("krw")
