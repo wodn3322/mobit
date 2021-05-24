@@ -26,12 +26,18 @@ class FragmentCoinList : Fragment() {
     // UI 변수 끝
 
     val myViewModel: MyViewModel by activityViewModels()
-    val coinInfo: ArrayList<CoinInfo> = ArrayList()
-    val favoriteCoinInfo: ArrayList<CoinInfo> = ArrayList()
-    lateinit var adapter: FragmentCoinListAdapter
-    lateinit var favoriteAdapter: FragmentCoinListAdapter
 
-    var listener: OnFragmentInteraction? = null
+    // true -> 전체 코인 리스트를 보여주고 있는 상황
+    // false -> 관심 코인 리스트를 보여주고 있는 상황
+    var adapterState: Boolean = true
+
+    val coinInfo: ArrayList<CoinInfo> = ArrayList()             // 전체 코인 리스트
+    lateinit var adapter: FragmentCoinListAdapter               // 전체 코인 리스트 adapter
+
+    val favoriteCoinInfo: ArrayList<CoinInfo> = ArrayList()     // 관심 코인 리스트
+    lateinit var favoriteAdapter: FragmentCoinListAdapter       // 관심 코인 리스트 adapter
+
+    var listener: OnFragmentInteraction? = null     // MainActivity와 통신할 때 사용되는 interface
 
     interface OnFragmentInteraction {
         fun showTransaction()
@@ -89,10 +95,12 @@ class FragmentCoinList : Fragment() {
                 override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
                     when (checkedId) {
                         R.id.krwBtn -> {
+                            adapterState = true
                             recyclerView.adapter = adapter
                             adapter.notifyDataSetChanged()
                         }
                         R.id.favoriteBtn -> {
+                            adapterState = false
                             recyclerView.adapter = favoriteAdapter
                             favoriteAdapter.notifyDataSetChanged()
                         }
@@ -105,12 +113,20 @@ class FragmentCoinList : Fragment() {
 
             searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                    adapter.filter.filter(query)
+                    if (adapterState) {
+                        adapter.filter.filter(query)
+                    } else {
+                        favoriteAdapter.filter.filter(query)
+                    }
                     return true
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    adapter.filter.filter(newText)
+                    if (adapterState) {
+                        adapter.filter.filter(newText)
+                    } else {
+                        favoriteAdapter.filter.filter(newText)
+                    }
                     return true
                 }
 

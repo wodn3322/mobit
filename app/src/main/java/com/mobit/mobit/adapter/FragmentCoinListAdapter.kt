@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mobit.mobit.R
@@ -25,6 +26,7 @@ class FragmentCoinListAdapter(
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val linearLayout: LinearLayout
         val korCoinName: TextView
         val engCoinName: TextView
         val realTimePrice: TextView
@@ -32,6 +34,7 @@ class FragmentCoinListAdapter(
         val totalTradePrice: TextView
 
         init {
+            linearLayout = itemView.findViewById(R.id.linearLayout)
             korCoinName = itemView.findViewById(R.id.korCoinName)
             engCoinName = itemView.findViewById(R.id.engCoinName)
             realTimePrice = itemView.findViewById(R.id.realTimePrice)
@@ -45,6 +48,7 @@ class FragmentCoinListAdapter(
                     }
                 }
             }
+            linearLayout.setOnClickListener(clickListener)
             korCoinName.setOnClickListener(clickListener)
             engCoinName.setOnClickListener(clickListener)
             realTimePrice.setOnClickListener(clickListener)
