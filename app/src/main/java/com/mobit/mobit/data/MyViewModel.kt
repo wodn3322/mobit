@@ -2,6 +2,7 @@ package com.mobit.mobit.data
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.mobit.mobit.db.MyDBHelper
 
 class MyViewModel : ViewModel() {
 
@@ -22,6 +23,9 @@ class MyViewModel : ViewModel() {
 
     // 사용자가 매수 또는 매도를 진행할 때마다, 거래 내역을 저장할 변수
     val transaction: MutableLiveData<ArrayList<Transaction>> = MutableLiveData()
+
+    // DB에 데이터를 저장하기 위한 변수
+    var myDBHelper: MyDBHelper? = null
 
     fun setSelectedCoin(selectedCoin: String) {
         this.selectedCoin.value = selectedCoin

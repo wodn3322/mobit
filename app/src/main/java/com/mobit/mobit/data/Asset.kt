@@ -2,6 +2,11 @@ package com.mobit.mobit.data
 
 class Asset {
 
+    constructor(krw: Double, coins: ArrayList<CoinAsset>) {
+        this.krw = krw
+        this.coins.addAll(coins)
+    }
+
     var krw: Double = 0.0   // 보유 KRW 금액
     val coins: ArrayList<CoinAsset> = ArrayList()   // 보유 코인 자산
 

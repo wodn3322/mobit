@@ -8,10 +8,9 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.mobit.mobit.data.CoinInfo
-import com.mobit.mobit.data.MyViewModel
-import com.mobit.mobit.data.OrderBook
+import com.mobit.mobit.data.*
 import com.mobit.mobit.databinding.ActivityMainBinding
+import com.mobit.mobit.db.MyDBHelper
 import com.mobit.mobit.network.UpbitAPICaller
 import java.util.*
 import kotlin.collections.ArrayList
@@ -39,6 +38,9 @@ class MainActivity : AppCompatActivity() {
     // 코인 호가 정보 가져오는 쓰레드
     lateinit var upbitAPIThread2: UpbitAPIThread
 
+    val dbHandler: DBHandler = DBHandler()
+    lateinit var dbThread: DBThread
+
     val codes: ArrayList<String> = arrayListOf(
         CoinInfo.BTC_CODE,
         CoinInfo.ETH_CODE,
@@ -51,6 +53,7 @@ class MainActivity : AppCompatActivity() {
         CoinInfo.LINK_CODE,
         CoinInfo.ETC_CODE
     )
+    val favoriteCodes: ArrayList<String> = ArrayList()
 
     // 뒤로가기 두번 누르면 앱 종료 관련 변수 시작
     val FINISH_INTERVAL_TIME: Long = 2000
@@ -58,16 +61,12 @@ class MainActivity : AppCompatActivity() {
     // 뒤로가기 두번 누르면 앱 종료 관련 변수 끝
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.Theme_Mobit)
+//        setTheme(R.style.Theme_Mobit)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        upbitAPIThread = UpbitAPIThread(100, codes)
-        upbitAPIThread.start()
-        upbitAPIThread2 = UpbitAPIThread(200, codes)
-        upbitAPIThread2.start()
-
+        initDB()
         initData()
         init()
     }
@@ -112,10 +111,21 @@ class MainActivity : AppCompatActivity() {
         thread.start()
     }
 
+    fun initDB() {
+        myViewModel.myDBHelper = MyDBHelper(this)
+        dbThread = DBThread()
+        dbThread.start()
+    }
+
     fun initData() {
         myViewModel.setSelectedCoin(CoinInfo.BTC_CODE)
         myViewModel.setFavoriteCoinInfo(ArrayList<CoinInfo>())
         myViewModel.setOrderBook(ArrayList<OrderBook>())
+
+        upbitAPIThread = UpbitAPIThread(100, codes)
+        upbitAPIThread.start()
+        upbitAPIThread2 = UpbitAPIThread(200, codes)
+        upbitAPIThread2.start()
     }
 
     fun init() {
@@ -162,6 +172,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     inner class UpbitAPIHandler() : Handler() {
+
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
 
@@ -172,6 +183,14 @@ class MainActivity : AppCompatActivity() {
                 if (type == 100 && isSuccess) {
                     val coinInfo = bundle.getSerializable("coinInfo") as ArrayList<CoinInfo>
                     myViewModel.setCoinInfo(coinInfo)
+
+                    val favoritesList = ArrayList<CoinInfo>()
+                    for (coin in coinInfo) {
+                        if (favoriteCodes.contains(coin.code)) {
+                            favoritesList.add(coin)
+                        }
+                    }
+                    myViewModel.setFavoriteCoinInfo(favoritesList)
                 } else if (type == 200 && isSuccess) {
                     val orderBook = bundle.getSerializable("orderBook") as ArrayList<OrderBook>
                     myViewModel.setOrderBook(orderBook)
@@ -239,6 +258,93 @@ class MainActivity : AppCompatActivity() {
 
         fun threadStop(flag: Boolean) {
             this.stopFlag = flag
+        }
+    }
+
+    inner class DBHandler : Handler() {
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+
+            val bundle: Bundle = msg.data
+            if (!bundle.isEmpty) {
+                val isFavorites = bundle.getBoolean("isFavorites")
+                val isKrw = bundle.getBoolean("isKrw")
+                val isCoinAssets = bundle.getBoolean("isCoinAssets")
+                val isTransaction = bundle.getBoolean("isTransactions")
+
+                if (isFavorites) {
+                    favoriteCodes.addAll(bundle.getSerializable("favorites") as ArrayList<String>)
+                }
+                if (isKrw) {
+                    val krw = bundle.getDouble("krw")
+                    if (isCoinAssets) {
+                        val coinAssets =
+                            bundle.getSerializable("coinAssets") as ArrayList<CoinAsset>
+                        val asset = Asset(krw, coinAssets)
+                        myViewModel.setAsset(asset)
+                    } else {
+                        val asset = Asset(krw, ArrayList<CoinAsset>())
+                        myViewModel.setAsset(asset)
+                    }
+                } else {
+                    val asset = Asset(10000000.0, ArrayList<CoinAsset>())
+                    myViewModel.setAsset(asset)
+                }
+                if (isTransaction) {
+                    val transactions =
+                        bundle.getSerializable("transactions") as ArrayList<Transaction>
+                    myViewModel.setTransaction(transactions)
+                } else {
+                    val transactions = ArrayList<Transaction>()
+                    myViewModel.setTransaction(transactions)
+                }
+            }
+        }
+    }
+
+    inner class DBThread : Thread() {
+        override fun run() {
+            val message: Message = dbHandler.obtainMessage()
+            val bundle: Bundle = Bundle()
+
+            // DB로부터  favorite 데이터 가져오기
+            val favorites = myViewModel.myDBHelper!!.getFavorites()
+            if (favorites.isNotEmpty()) {
+                bundle.putBoolean("isFavorites", true)
+                bundle.putSerializable("favorites", favorites)
+            } else {
+                bundle.putBoolean("isFavorites", false)
+            }
+
+            // DB로부터 KRW 데이터 가져오기
+            val krw = myViewModel.myDBHelper!!.getKRW()
+            if (krw != null) {
+                bundle.putBoolean("isKrw", true)
+                bundle.putDouble("krw", krw!!)
+            } else {
+                bundle.putBoolean("isKrw", false)
+            }
+
+            // DB로부터 CoinAsset 데이터 가져오기
+            val coinAssets = myViewModel.myDBHelper!!.getCoinAssets()
+            if (coinAssets.isNotEmpty()) {
+                bundle.putBoolean("isCoinAssets", true)
+                bundle.putSerializable("coinAssets", coinAssets)
+            } else {
+                bundle.putBoolean("isCoinAssets", false)
+            }
+
+            // DB로부터 Transaction 데이터 가져오기
+            val transactions = myViewModel.myDBHelper!!.getTransactions()
+            if (transactions.isNotEmpty()) {
+                bundle.putBoolean("isTransactions", true)
+                bundle.putSerializable("transactions", transactions)
+            } else {
+                bundle.putBoolean("isTransactions", false)
+            }
+
+            message.data = bundle
+            dbHandler.sendMessage(message)
         }
     }
 
