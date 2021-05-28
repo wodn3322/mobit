@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Mobit">
         <activity
+            android:name=".PopupBuySellActivity"
+            android:theme="@android:style/Theme.Dialog" />
+        <activity
             android:name=".MainActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
