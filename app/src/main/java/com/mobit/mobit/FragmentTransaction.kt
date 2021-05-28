@@ -24,10 +24,17 @@ import java.text.DecimalFormat
  */
 class FragmentTransaction : Fragment() {
 
+    companion object {
+        const val FRAGMENT_BUY: Int = 100
+        const val FRAGMENT_SELL: Int = 200
+        const val FRAGMENT_COIN_INFO: Int = 300
+    }
+
     // Fragment 변수 시작
     val fragmentBuy: Fragment = FragmentBuy()
     val fragmentSell: Fragment = FragmentSell()
     val fragmentCoinInfo: Fragment = FragmentCoinInfo()
+    var fragmentState: Int = FRAGMENT_BUY
     // Fragment 변수 끝
 
     // UI 변수 시작
@@ -35,9 +42,13 @@ class FragmentTransaction : Fragment() {
     // UI 변수 끝
 
     val myViewModel: MyViewModel by activityViewModels()
-    lateinit var adapter: FragmentTransactionAdapter
-    var selectedCoin: CoinInfo? = null
-    val orderBook: ArrayList<OrderBook> = ArrayList()
+
+    lateinit var adapter: FragmentTransactionAdapter        // 호가 정보 리스트 adapter
+    var selectedCoin: CoinInfo? = null                      // CoinList에서 사용자가 선택한 코인의 정보
+    val orderBook: ArrayList<OrderBook> =
+        ArrayList()       // selectedCoin의 호가 정보를 갖는다. (내림차순으로 정렬되어 있음)
+    // [0, 14] -> 매도 호가
+    // [15, 29] -> 매수 호가
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -77,6 +88,7 @@ class FragmentTransaction : Fragment() {
             }
         })
         myViewModel.orderBook.observe(viewLifecycleOwner, Observer {
+//            Log.i("FragmentTransaction","orderBook.observe() is called.")
             orderBook.clear()
             orderBook.addAll(myViewModel.orderBook.value!!)
             adapter.notifyDataSetChanged()
@@ -89,11 +101,6 @@ class FragmentTransaction : Fragment() {
             }
         }
         adapter = FragmentTransactionAdapter(orderBook, selectedCoin!!.price.openPrice)
-        adapter.listener = object : FragmentTransactionAdapter.OnItemClickListener {
-            override fun onItemClicked(view: View, price: Double) {
-                // FragmentBuy와 FragmentSell의 현재가를 출력하는 TextView의 text를 price로 설정해야 한다.
-            }
-        }
 
         replaceFragment(fragmentBuy)
         binding.apply {
@@ -107,12 +114,15 @@ class FragmentTransaction : Fragment() {
                 override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
                     when (checkedId) {
                         R.id.coinBuyBtn -> {
+                            fragmentState = FRAGMENT_BUY
                             replaceFragment(fragmentBuy)
                         }
                         R.id.coinSellBtn -> {
+                            fragmentState = FRAGMENT_SELL
                             replaceFragment(fragmentSell)
                         }
                         R.id.coinInfoBtn -> {
+                            fragmentState = FRAGMENT_COIN_INFO
                             replaceFragment(fragmentCoinInfo)
                         }
                         else -> {
@@ -134,7 +144,8 @@ class FragmentTransaction : Fragment() {
                         if (myViewModel.removeFavoriteCoinInfo(selectedCoin!!)) {
                             val thread = object : Thread() {
                                 override fun run() {
-                                    val flag = myViewModel.myDBHelper!!.deleteFavorite(selectedCoin!!.code)
+                                    val flag =
+                                        myViewModel.myDBHelper!!.deleteFavorite(selectedCoin!!.code)
                                     Log.e("favorite delete", flag.toString())
                                 }
                             }
@@ -148,7 +159,8 @@ class FragmentTransaction : Fragment() {
                         if (myViewModel.addFavoriteCoinInfo(selectedCoin!!)) {
                             val thread = object : Thread() {
                                 override fun run() {
-                                    val flag = myViewModel.myDBHelper!!.insertFavoirte(selectedCoin!!.code)
+                                    val flag =
+                                        myViewModel.myDBHelper!!.insertFavoirte(selectedCoin!!.code)
                                     Log.e("favorite insert", flag.toString())
                                 }
                             }

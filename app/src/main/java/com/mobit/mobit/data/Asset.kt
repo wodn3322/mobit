@@ -10,13 +10,70 @@ class Asset {
     var krw: Double = 0.0   // 보유 KRW 금액
     val coins: ArrayList<CoinAsset> = ArrayList()   // 보유 코인 자산
 
-    // code에 해당하는 코인을 number개 만큼 매수한다.
-    fun bidCoin(code: String, number: Double) {
+    // code에 해당하는 코인을 price 가격으로 number개 만큼 매수한다.
+    // 매수한 코인의 인덱스를 리턴한다.
+    fun bidCoin(code: String, name: String, price: Double, number: Double): Int {
+        val orderPrice = price * number
+        val fee = orderPrice * 0.0005
+        if (krw < orderPrice + fee)
+            return -1
+        krw -= (orderPrice + fee)
 
+        var index: Int = -1
+        for (i in coins.indices) {
+            if (coins[i].code == code) {
+                index = i
+                break
+            }
+        }
+
+        var ret: Int = 0
+        if (index == -1) {
+            val newCoin = CoinAsset(code, name, number, price * number, price)
+            coins.add(newCoin)
+            ret = coins.size - 1
+        } else {
+            coins[index].number += number
+            coins[index].amount += price * number
+            coins[index].averagePrice = coins[index].amount / coins[index].number
+            ret = index
+        }
+        return ret
     }
 
-    // code에 해당하는 코인을 number개 만큼 매도한다.
-    fun askCoin(code: String, number: Double) {
+    // code에 해당하는 코인을 price 가격으로 number개 만큼 매도한다.
+    // 매도한 코인의 coinAsset을 리턴한다.
+    fun askCoin(code: String, price: Double, number: Double): CoinAsset? {
+        var index: Int = -1
+        for (i in coins.indices) {
+            if (coins[i].code == code) {
+                index = i
+                break
+            }
+        }
+        if (index == -1)
+            return null
 
+        val coin = coins[index]
+        if (coin!!.number < number)
+            return null
+
+        val orderPrice = price * number
+        val fee = orderPrice * 0.0005
+        krw += (orderPrice - fee)
+
+        var ret: CoinAsset? = null
+        if (coin.number == number) {
+            coins.remove(coin)
+            coin.number = 0.0
+            ret = coin
+        } else {
+            coins[index].number -= number
+            coins[index].amount -= (price * number)
+            coins[index].averagePrice = coins[index].amount / coins[index].number
+            ret = coins[index]
+        }
+
+        return ret
     }
 }

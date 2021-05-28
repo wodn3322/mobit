@@ -10,4 +10,9 @@ data class Transaction(
     val tradePrice: Double,     // 거래 금액
     val fee: Double,            // 수수료
     val totalPrice: Double      // 정산 금액
-)
+) {
+    companion object {
+        const val BID = 100     // 매수
+        const val ASK = 200     // 매도
+    }
+}
