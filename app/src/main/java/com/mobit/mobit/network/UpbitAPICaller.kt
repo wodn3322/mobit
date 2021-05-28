@@ -1,6 +1,7 @@
 package com.mobit.mobit.network
 
 import android.util.Log
+import com.mobit.mobit.data.Candle
 import com.mobit.mobit.data.OrderBook
 import com.mobit.mobit.data.Price
 import org.json.JSONArray
@@ -19,7 +20,7 @@ class UpbitAPICaller {
         val TICK_URL = "https://api.upbit.com/v1/trades/ticks"
         val TICKER_URL = "https://api.upbit.com/v1/ticker"
         val ORDERBOOK_URL = "https://api.upbit.com/v1/orderbook"
-        val CANDLE_MINUTE_URL = "https://api.upbit.com/v1/candles/minutes/"
+        val CANDLE_MINUTE_URL = "https://api.upbit.com/v1/candles/minutes"
         val CANDLE_DAY_URL = "https://api.upbit.com/v1/candles/days"
         val CANDLE_WEEK_URL = "https://api.upbit.com/v1/candles/weeks"
         val CANDLE_MONTH_URL = "https://api.upbit.com/v1/candles/months"
@@ -146,23 +147,103 @@ class UpbitAPICaller {
     }
 
     // code에 해당하는 코인의 unit분 단위의 캔들 차트 정보를 가져오는 함수
-    fun getCandleMinute(code: String, unit: Int) {
+    fun getCandleMinute(code: String, unit: Int): ArrayList<Candle> {
+        val ret = ArrayList<Candle>()
 
+        val query = "/$unit?market=$code&count=200"
+        val url = CANDLE_MINUTE_URL + query
+        val text = connect(url)
+        if (text.isBlank())
+            return ret
+
+        val candles = JSONArray(text)
+        for (i in 1..candles.length()) {
+            val candle = candles.getJSONObject(candles.length() - i)
+            val createdAt = i.toLong()
+            val open = candle.getDouble("opening_price").toFloat()
+            val close = candle.getDouble("trade_price").toFloat()
+            val shadowHigh = candle.getDouble("high_price").toFloat()
+            val shadowLow = candle.getDouble("low_price").toFloat()
+            val totalTradeVolume = candle.getDouble("candle_acc_trade_volume").toFloat()
+            ret.add(Candle(createdAt, open, close, shadowHigh, shadowLow, totalTradeVolume))
+        }
+
+        return ret
     }
 
     // code에 해당하는 코인의 일 단위의 캔들 차트 정보를 가져오는 함수
-    fun getCandleDay(code: String) {
+    fun getCandleDay(code: String): ArrayList<Candle> {
+        val ret = ArrayList<Candle>()
 
+        val query = "?market=$code&count=200"
+        val url = CANDLE_DAY_URL + query
+        val text = connect(url)
+        if (text.isBlank())
+            return ret
+
+        val candles = JSONArray(text)
+        for (i in 1..candles.length()) {
+            val candle = candles.getJSONObject(candles.length() - i)
+            val createdAt = i.toLong()
+            val open = candle.getDouble("opening_price").toFloat()
+            val close = candle.getDouble("trade_price").toFloat()
+            val shadowHigh = candle.getDouble("high_price").toFloat()
+            val shadowLow = candle.getDouble("low_price").toFloat()
+            val totalTradeVolume = candle.getDouble("candle_acc_trade_volume").toFloat()
+            ret.add(Candle(createdAt, open, close, shadowHigh, shadowLow, totalTradeVolume))
+        }
+
+        return ret
     }
 
     // code에 해당하는 코인의 주 단위의 캔들 차트 정보를 가져오는 함수
-    fun getCandleWeek(code: String) {
+    fun getCandleWeek(code: String): ArrayList<Candle> {
+        val ret = ArrayList<Candle>()
 
+        val query = "?market=$code&count=200"
+        val url = CANDLE_WEEK_URL + query
+        val text = connect(url)
+        if (text.isBlank())
+            return ret
+
+        val candles = JSONArray(text)
+        for (i in 1..candles.length()) {
+            val candle = candles.getJSONObject(candles.length() - i)
+            val createdAt = i.toLong()
+            val open = candle.getDouble("opening_price").toFloat()
+            val close = candle.getDouble("trade_price").toFloat()
+            val shadowHigh = candle.getDouble("high_price").toFloat()
+            val shadowLow = candle.getDouble("low_price").toFloat()
+            val totalTradeVolume = candle.getDouble("candle_acc_trade_volume").toFloat()
+            ret.add(Candle(createdAt, open, close, shadowHigh, shadowLow, totalTradeVolume))
+        }
+
+        return ret
     }
 
     // code에 해당하는 코인의 월 단위의 캔들 차트 정보를 가져오는 함수
-    fun getCandleMonth(code: String) {
+    fun getCandleMonth(code: String): ArrayList<Candle> {
+        val ret = ArrayList<Candle>()
 
+        val query = "?market=$code&count=200"
+        val url = CANDLE_MONTH_URL + query
+        val text = connect(url)
+        if (text.isBlank())
+            return ret
+
+        val candles = JSONArray(text)
+        for (i in 1..candles.length()) {
+            val candle = candles.getJSONObject(candles.length() - i)
+            val createdAt = i.toLong()
+            val open = candle.getDouble("opening_price").toFloat()
+            val close = candle.getDouble("trade_price").toFloat()
+            val shadowHigh = candle.getDouble("high_price").toFloat()
+            val shadowLow = candle.getDouble("low_price").toFloat()
+            val totalTradeVolume = candle.getDouble("candle_acc_trade_volume").toFloat()
+            ret.add(Candle(createdAt, open, close, shadowHigh, shadowLow, totalTradeVolume))
+        }
+
+        return ret
     }
 
 }
