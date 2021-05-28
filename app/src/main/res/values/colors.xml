@@ -20,4 +20,6 @@
     <color name="transaction_blue">#135fc1</color>
     <color name="transaction_recyclerview_background_blue">#081d3a</color>
     <color name="transaction_recyclerview_background_red">#241a23</color>
+    <color name="popup_buy_red">#c34c34</color>
+    <color name="popup_sell_blue">#1262c5</color>
 </resources>

@@ -17,7 +17,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="1dp"
-            android:layout_weight="2"
+            android:layout_weight="3"
             android:background="@color/transaction_recyclerview_background_blue"
             android:orientation="vertical">
 
@@ -46,11 +46,15 @@
             android:id="@+id/orderSize"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="2"
+            android:autoSizeMaxTextSize="10sp"
+            android:autoSizeMinTextSize="6sp"
+            android:autoSizeStepGranularity="4sp"
+            android:autoSizeTextType="uniform"
             android:background="@color/transaction_recyclerview_background_blue"
-            android:gravity="center"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="10dp"
             android:text="799,336.887"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp" />
+            android:textColor="#FFFFFF" />
     </LinearLayout>
 </LinearLayout>
