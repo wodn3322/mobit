@@ -56,8 +56,14 @@ class FragmentCoinList : Fragment() {
 
     fun init() {
         myViewModel.coinInfo.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            coinInfo.clear()
-            coinInfo.addAll(myViewModel.coinInfo.value!!)
+//            coinInfo.clear()
+//            coinInfo.addAll(myViewModel.coinInfo.value!!)
+            for (index in it.indices) {
+                if (coinInfo.size > index)
+                    coinInfo[index] = it[index]
+                else
+                    coinInfo.add(it[index])
+            }
             adapter.notifyDataSetChanged()
         })
 
