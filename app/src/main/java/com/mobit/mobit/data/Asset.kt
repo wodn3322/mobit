@@ -31,7 +31,7 @@ class Asset {
         if (index == -1) {
             val newCoin = CoinAsset(code, name, number, price * number, price)
             coins.add(newCoin)
-            ret = coins.size - 1
+            ret = coins.indexOf(newCoin)
         } else {
             coins[index].number += number
             coins[index].amount += price * number

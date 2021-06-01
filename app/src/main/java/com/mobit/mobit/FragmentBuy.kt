@@ -79,9 +79,13 @@ class FragmentBuy : Fragment() {
 
                             val size = myViewModel.asset.value!!.coins.size
                             if (buyIndex == size - 1) {
-                                myViewModel.myDBHelper!!.insertCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
+                                val ret =
+                                    myViewModel.myDBHelper!!.insertCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
+                                Log.i("insertCoinAsset", ret.toString())
                             } else if (buyIndex < size - 1) {
-                                myViewModel.myDBHelper!!.updateCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
+                                val ret =
+                                    myViewModel.myDBHelper!!.updateCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
+                                Log.i("updateCoinAsset", ret.toString())
                             } else {
                                 Log.e("FragmentBuy index", buyIndex.toString())
                             }

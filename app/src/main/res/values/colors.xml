@@ -11,6 +11,7 @@
     <color name="splash_background">#093687</color>
     <color name="main_background">#061222</color>
     <color name="main_bottom_nav">#08275d</color>
+    <color name="upbit_light_gray">#d3d4d6</color>
     <color name="coin_list_gray">#848b95</color>
     <color name="coin_list_blue">#135fc1</color>
     <color name="coin_list_red">#bd4e3a</color>

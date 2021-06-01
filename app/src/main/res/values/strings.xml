@@ -40,6 +40,10 @@
     <string name="asset_no_data">--</string>
     <string name="asset_no_coin">현재 보유 중인 코인이 없습니다.</string>
     <string name="asset_no_transaction">거래내역이 없습니다.</string>
+    <string name="asset_retained_number">보유수량</string>
+    <string name="asset_average_price">매수평균가</string>
+    <string name="asset_evaluation">평가금액</string>
+    <string name="asset_buy_price">매수금액</string>
 
     <!--    about fragment_transaction-->
     <string name="transaction_title">도지코인(DOGE)</string>

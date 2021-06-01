@@ -185,6 +185,20 @@ class MainActivity : AppCompatActivity() {
                     val favoriteCoinInfo =
                         bundle.getSerializable("favoriteCoinInfo") as ArrayList<CoinInfo>
                     myViewModel.setFavoriteCoinInfo(favoriteCoinInfo)
+
+                    // 임시방편으로 코드를 구현해놓긴 했지만, 나중에 Asset 클래스 구조를 수정해야 할 필요는 있다.
+                    val asset = Asset(myViewModel.asset.value!!.krw, ArrayList<CoinAsset>())
+                    for (i in myViewModel.asset.value!!.coins.indices) {
+                        for (coin in coinInfo) {
+                            if (myViewModel.asset.value!!.coins[i].code == coin.code) {
+                                myViewModel.asset.value!!.coins[i].amount =
+                                    coin.price.realTimePrice * myViewModel.asset.value!!.coins[i].number
+                                asset.coins.add(myViewModel.asset.value!!.coins[i])
+                                break
+                            }
+                        }
+                    }
+                    myViewModel.setAsset(asset)
                 } else if (type == 200 && isSuccess) {
                     val orderBook = bundle.getSerializable("orderBook") as ArrayList<OrderBook>
                     myViewModel.setOrderBook(orderBook)
@@ -241,7 +255,7 @@ class MainActivity : AppCompatActivity() {
 
                 message.data = bundle
                 upbitAPIHandler.sendMessage(message)
-                sleep(200)
+                sleep(300)
             }
         }
 
@@ -320,9 +334,11 @@ class MainActivity : AppCompatActivity() {
                         val asset = Asset(krw, ArrayList<CoinAsset>())
                         myViewModel.setAsset(asset)
                     }
+                    Log.i("isKrw True", krw.toString())
                 } else {
                     val asset = Asset(10000000.0, ArrayList<CoinAsset>())
                     myViewModel.setAsset(asset)
+                    Log.i("isKrw False", asset.krw.toString())
                 }
                 if (isTransaction) {
                     val transactions =

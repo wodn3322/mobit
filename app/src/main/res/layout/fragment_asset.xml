@@ -22,7 +22,7 @@
             android:layout_marginRight="10dp"
             android:padding="10dp"
             android:text="@string/asset_title"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/upbit_light_gray"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -45,7 +45,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/asset_KRW"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/upbit_light_gray"
                     android:textSize="16sp" />
 
                 <TextView
@@ -54,7 +54,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="0"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/upbit_light_gray"
                     android:textSize="20sp" />
             </LinearLayout>
 
@@ -70,7 +70,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/asset_total"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/upbit_light_gray"
                     android:textSize="16sp" />
 
                 <TextView
@@ -79,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="0"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/upbit_light_gray"
                     android:textSize="20sp" />
             </LinearLayout>
         </LinearLayout>
@@ -100,7 +100,7 @@
                 android:layout_weight="1"
                 android:gravity="left|center_vertical"
                 android:text="@string/asset_total_buy"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/upbit_light_gray"
                 android:textSize="14sp" />
 
             <TextView
@@ -112,7 +112,7 @@
                 android:gravity="right|center_vertical"
                 android:paddingRight="20dp"
                 android:text="0"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/upbit_light_gray"
                 android:textSize="16sp" />
 
             <TextView
@@ -123,7 +123,7 @@
                 android:layout_weight="1"
                 android:gravity="left|center_vertical"
                 android:text="@string/asset_gain_and_loss"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/upbit_light_gray"
                 android:textSize="14sp" />
 
             <TextView
@@ -134,7 +134,7 @@
                 android:gravity="right|center_vertical"
                 android:paddingRight="20dp"
                 android:text="@string/asset_no_data"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/upbit_light_gray"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -156,7 +156,7 @@
                 android:layout_weight="1"
                 android:gravity="left|center_vertical"
                 android:text="@string/asset_total_evaluation"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/upbit_light_gray"
                 android:textSize="14sp" />
 
             <TextView
@@ -168,7 +168,7 @@
                 android:gravity="right|center_vertical"
                 android:paddingRight="20dp"
                 android:text="@string/asset_no_data"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/upbit_light_gray"
                 android:textSize="16sp" />
 
             <TextView
@@ -179,7 +179,7 @@
                 android:layout_weight="1"
                 android:gravity="left|center_vertical"
                 android:text="@string/asset_yield"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/upbit_light_gray"
                 android:textSize="14sp" />
 
             <TextView
@@ -190,7 +190,7 @@
                 android:gravity="right|center_vertical"
                 android:paddingRight="20dp"
                 android:text="@string/asset_no_data"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/upbit_light_gray"
                 android:textSize="16sp" />
         </LinearLayout>
     </LinearLayout>
