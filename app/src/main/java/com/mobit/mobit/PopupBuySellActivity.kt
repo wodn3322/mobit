@@ -3,6 +3,7 @@ package com.mobit.mobit
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.Window
@@ -20,6 +21,8 @@ class PopupBuySellActivity : Activity() {
         binding = ActivityPopupBuySellBinding.inflate(layoutInflater)
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(binding.root)
+
+        window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         // 1-> 매수
         // 2-> 매도
