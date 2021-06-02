@@ -116,13 +116,18 @@ class FragmentSell : Fragment() {
             binding.orderTotalPrice.text = "${formatter.format(orderPrice * orderCount)}KRW"
         })
         myViewModel.selectedCoin.observe(viewLifecycleOwner, Observer {
+            var check = false
             for (coinAsset in myViewModel.asset.value!!.coins) {
                 if (coinAsset.code == myViewModel.selectedCoin.value!!) {
+                    check = true
                     selectedCoin = coinAsset
                     binding.canOrderCoin.text =
-                        "${formatter.format(coinAsset.number)} ${coinAsset.code.split('-')[1]}"
+                        "${formatter2.format(coinAsset.number)} ${coinAsset.code.split('-')[1]}"
                     break
                 }
+            }
+            if (!check) {
+                binding.canOrderCoin.text = "0 ${myViewModel.selectedCoin.value!!.split('-')[1]}"
             }
         })
 
