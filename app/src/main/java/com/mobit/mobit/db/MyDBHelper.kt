@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import com.mobit.mobit.data.CoinAsset
 import com.mobit.mobit.data.Transaction
 import org.json.JSONObject
@@ -12,7 +13,7 @@ class MyDBHelper(val context: Context) : SQLiteOpenHelper(context, DB_NAME, null
     companion object {
         val DB_NAME = "mobit.db"
         val DB_VERSION = 1
-        val TABLE_NAME = arrayOf("favorite", "krw", "coinAsset", "trade")
+        val TABLE_NAME = arrayOf("favorite", "krw", "coinAsset", "trade", "firstFlag")
 
         // about favorite
         val CODE = "code"
@@ -28,6 +29,9 @@ class MyDBHelper(val context: Context) : SQLiteOpenHelper(context, DB_NAME, null
 
         // about transaction
         val TRANSACTION = "trade"
+
+        // about flag
+        val FIRST_SETTING = "firstSetting"
     }
 
     // 관심 코인을 DB에 저장
@@ -252,6 +256,35 @@ class MyDBHelper(val context: Context) : SQLiteOpenHelper(context, DB_NAME, null
         return Transaction(code, name, time, type, quantity, unitPrice, tradePrice, fee, totalPrice)
     }
 
+    fun setFlag(flag: Boolean): Boolean {
+        val values = ContentValues()
+        val num = if (flag) 1 else 0
+        values.put(FIRST_SETTING, num)
+
+        val db = writableDatabase
+        val ret = db.insert(TABLE_NAME[4], null, values) > 0
+        db.close()
+        return ret
+    }
+
+    fun getFlag(): Boolean {
+        var ret = false
+
+        val strsql = "select * from ${TABLE_NAME[4]};"
+        val db = readableDatabase
+        val cursor = db.rawQuery(strsql, null)
+        cursor.moveToFirst()
+        if (cursor.count != 0) {
+            val num = cursor.getInt(0)
+            Log.i("getFlag num", num.toString())
+            ret = if (num == 1) true else false
+        }
+        cursor.close()
+        db.close()
+
+        return ret
+    }
+
     override fun onCreate(db: SQLiteDatabase?) {
         val createTable1 = "create table if not exists ${TABLE_NAME[0]}($CODE text primary key)"
         val createTable2 =
@@ -259,10 +292,12 @@ class MyDBHelper(val context: Context) : SQLiteOpenHelper(context, DB_NAME, null
         val createTable3 =
             "create table if not exists ${TABLE_NAME[2]}($CODE text primary key, $NAME text, $NUMBER real, $AMOUNT real, $AVERAGE_PRICE real)"
         val createTable4 = "create table if not exists ${TABLE_NAME[3]}($TRANSACTION text)"
+        val createTable5 = "create table if not exists ${TABLE_NAME[4]}($FIRST_SETTING INTEGER)"
         db?.execSQL(createTable1)
         db?.execSQL(createTable2)
         db?.execSQL(createTable3)
         db?.execSQL(createTable4)
+        db?.execSQL(createTable5)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -270,10 +305,12 @@ class MyDBHelper(val context: Context) : SQLiteOpenHelper(context, DB_NAME, null
         val dropTable2 = "drop table if exists ${TABLE_NAME[1]}"
         val dropTable3 = "drop table if exists ${TABLE_NAME[2]}"
         val dropTable4 = "drop table if exists ${TABLE_NAME[3]}"
+        val dropTable5 = "drop table if exists ${TABLE_NAME[4]}"
         db?.execSQL(dropTable1)
         db?.execSQL(dropTable2)
         db?.execSQL(dropTable3)
         db?.execSQL(dropTable4)
+        db?.execSQL(dropTable5)
         onCreate(db)
     }
 

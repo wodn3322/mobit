@@ -1,10 +1,12 @@
 package com.mobit.mobit
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -58,6 +60,20 @@ class MainActivity : AppCompatActivity() {
     val FINISH_INTERVAL_TIME: Long = 2000
     var backPressedTime: Long = 0
     // 뒤로가기 두번 누르면 앱 종료 관련 변수 끝
+
+    val getContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.data != null) {
+            val krw: Double = it.data!!.getDoubleExtra("krw", 10000000.0)
+            myViewModel.asset.value!!.krw = krw
+            val thread = object : Thread() {
+                override fun run() {
+                    myViewModel.myDBHelper!!.setFlag(true)
+                    myViewModel.myDBHelper!!.setKRW(krw)
+                }
+            }
+            thread.start()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
 //        setTheme(R.style.Theme_Mobit)
@@ -348,6 +364,13 @@ class MainActivity : AppCompatActivity() {
                     val transactions = ArrayList<Transaction>()
                     myViewModel.setTransaction(transactions)
                 }
+
+                val flag = bundle.getBoolean("flag")
+                setTheme(R.style.Theme_Mobit)
+                if (!flag) {
+                    val intent = Intent(this@MainActivity, FirstSettingActivity::class.java)
+                    getContent.launch(intent)
+                }
             }
         }
     }
@@ -392,6 +415,9 @@ class MainActivity : AppCompatActivity() {
             } else {
                 bundle.putBoolean("isTransactions", false)
             }
+
+            val flag = myViewModel.myDBHelper!!.getFlag()
+            bundle.putBoolean("flag", flag)
 
             message.data = bundle
             dbHandler.sendMessage(message)

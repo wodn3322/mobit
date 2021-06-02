@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Mobit">
+        <activity android:name=".FirstSettingActivity"></activity>
         <activity
             android:name=".PopupBuySellActivity"
             android:theme="@android:style/Theme.Dialog" />
