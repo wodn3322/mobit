@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     val fragmentChart: Fragment = FragmentChart()
     val fragmentTransaction: Fragment = FragmentTransaction()
     val fragmentInvestment: Fragment = FragmentInvestment()
+    val fragmentSetting: Fragment = FragmentSetting()
     // Fragment 변수 끝
 
     // UI 변수 시작
@@ -162,6 +163,10 @@ class MainActivity : AppCompatActivity() {
                     }
                     R.id.menu_investment -> {
                         replaceFragment(fragmentInvestment)
+                        return@setOnNavigationItemSelectedListener true
+                    }
+                    R.id.menu_setting -> {
+                        replaceFragment(fragmentSetting)
                         return@setOnNavigationItemSelectedListener true
                     }
                     else -> {

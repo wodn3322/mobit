@@ -285,6 +285,23 @@ class MyDBHelper(val context: Context) : SQLiteOpenHelper(context, DB_NAME, null
         return ret
     }
 
+    fun clearDB(): Boolean {
+        val strsql1 = "delete from ${TABLE_NAME[0]}"
+        val strsql2 = "delete from ${TABLE_NAME[1]}"
+        val strsql3 = "delete from ${TABLE_NAME[2]}"
+        val strsql4 = "delete from ${TABLE_NAME[3]}"
+        val strsql5 = "delete from ${TABLE_NAME[4]}"
+
+        val db = writableDatabase
+        db.execSQL(strsql1)
+        db.execSQL(strsql2)
+        db.execSQL(strsql3)
+        db.execSQL(strsql4)
+        db.execSQL(strsql5)
+
+        return true
+    }
+
     override fun onCreate(db: SQLiteDatabase?) {
         val createTable1 = "create table if not exists ${TABLE_NAME[0]}($CODE text primary key)"
         val createTable2 =
