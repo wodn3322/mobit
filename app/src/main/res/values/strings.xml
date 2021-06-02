@@ -96,4 +96,14 @@
     <string name="chart_unit_day">일</string>
     <string name="chart_unit_week">주</string>
     <string name="chart_unit_month">월</string>
+
+    <!--    about fragment_record-->
+    <string name="record_buy">매수</string>
+    <string name="record_sell">매도</string>
+    <string name="record_time">체결시간</string>
+    <string name="record_trade_price">거래금액</string>
+    <string name="record_trade_number">거래수량</string>
+    <string name="record_unit_price">거래단가</string>
+    <string name="record_fee">수수료</string>
+    <string name="record_total_price">정산금액</string>
 </resources>

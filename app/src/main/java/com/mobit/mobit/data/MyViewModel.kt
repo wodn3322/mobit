@@ -52,7 +52,10 @@ class MyViewModel : ViewModel() {
     }
 
     fun addTransaction(transaction: Transaction) {
-        this.transaction.value?.add(transaction)
+        val temp = ArrayList<Transaction>()
+        temp.add(transaction)
+        temp.addAll(this.transaction.value!!)
+        this.transaction.value = temp
     }
 
     fun addFavoriteCoinInfo(coinInfo: CoinInfo): Boolean {

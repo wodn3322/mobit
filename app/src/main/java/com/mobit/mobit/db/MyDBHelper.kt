@@ -219,6 +219,7 @@ class MyDBHelper(val context: Context) : SQLiteOpenHelper(context, DB_NAME, null
         cursor.close()
         db.close()
 
+        ret.reverse()
         return ret
     }
 

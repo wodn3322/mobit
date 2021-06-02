@@ -17,12 +17,15 @@
         android:theme="@style/SearchViewStyle"
         app:iconifiedByDefault="false"
         app:queryHint="@string/coin_list_search_default"
-        app:searchIcon="@drawable/ic_baseline_search_24" />
+        app:searchIcon="@drawable/ic_baseline_search_24">
+
+    </androidx.appcompat.widget.SearchView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
         android:visibility="gone" />
 
     <TextView
