@@ -17,7 +17,7 @@
         android:layout_marginRight="10dp"
         android:padding="10dp"
         android:text="@string/investment_title"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/upbit_light_gray"
         android:textSize="20sp"
         android:textStyle="bold" />
 
@@ -27,9 +27,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        app:tabIndicatorColor="#FFFFFF"
-        app:tabSelectedTextColor="#FFFFFF"
-        app:tabTextColor="#FFFFFF" />
+        app:tabIndicatorColor="@color/upbit_light_gray"
+        app:tabSelectedTextColor="@color/upbit_light_gray"
+        app:tabTextColor="@color/upbit_light_gray" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"

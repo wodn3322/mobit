@@ -38,7 +38,7 @@
             android:gravity="right|center_vertical"
             android:padding="10dp"
             android:text="0 DOGE"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/upbit_light_gray"
             android:textSize="16sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -66,7 +66,7 @@
                 android:layout_weight="1"
                 android:gravity="left|center_vertical"
                 android:text="@string/transaction_order_count"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/upbit_light_gray"
                 android:textSize="14sp" />
 
             <EditText
@@ -80,7 +80,7 @@
                 android:inputType="numberDecimal"
                 android:padding="0dp"
                 android:text="0"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/upbit_light_gray"
                 android:textSize="14sp" />
         </LinearLayout>
 
@@ -124,7 +124,7 @@
                 android:layout_weight="1"
                 android:gravity="left|center_vertical"
                 android:text="@string/transaction_order_price"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/upbit_light_gray"
                 android:textSize="14sp" />
 
             <TextView
@@ -134,7 +134,7 @@
                 android:layout_weight="2"
                 android:gravity="right|center_vertical"
                 android:text="604"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/upbit_light_gray"
                 android:textSize="14sp" />
         </LinearLayout>
 
@@ -182,7 +182,7 @@
             android:layout_weight="1"
             android:gravity="left|center_vertical"
             android:text="@string/transaction_order_total_price"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/upbit_light_gray"
             android:textSize="14sp" />
 
         <TextView
@@ -192,7 +192,7 @@
             android:layout_weight="2"
             android:gravity="right|center_vertical"
             android:text="0KRW"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/upbit_light_gray"
             android:textSize="14sp" />
     </LinearLayout>
 

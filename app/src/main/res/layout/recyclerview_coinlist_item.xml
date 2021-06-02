@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:gravity="left|center_vertical"
             android:text="도지코인"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/upbit_light_gray"
             android:textSize="14sp" />
 
         <TextView
@@ -61,6 +61,6 @@
         android:layout_weight="1"
         android:gravity="right|center_vertical"
         android:text="12,217,996백만"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/upbit_light_gray"
         android:textSize="11sp" />
 </LinearLayout>

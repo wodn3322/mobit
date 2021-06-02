@@ -24,7 +24,7 @@
             android:layout_marginRight="10dp"
             android:padding="10dp"
             android:text="@string/transaction_title"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/upbit_light_gray"
             android:textSize="20sp" />
 
         <LinearLayout

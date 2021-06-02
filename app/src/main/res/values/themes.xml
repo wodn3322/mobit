@@ -16,9 +16,9 @@
     </style>
 
     <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
-        <item name="android:textColorHint">#FFFFFF</item>
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:editTextColor">#FFFFFF</item>
+        <item name="android:textColorHint">@color/upbit_light_gray</item>
+        <item name="android:textColor">@color/upbit_light_gray</item>
+        <item name="android:editTextColor">@color/upbit_light_gray</item>
         <item name="android:textSize">14sp</item>
     </style>
 

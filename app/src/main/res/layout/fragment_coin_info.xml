@@ -25,7 +25,7 @@
                 android:lineSpacingExtra="5sp"
                 android:padding="10dp"
                 android:text="코인 정보가 들어갈 TextView 입니다."
-                android:textColor="#FFFFFF"
+                android:textColor="@color/upbit_light_gray"
                 android:textSize="14sp" />
         </LinearLayout>
     </ScrollView>

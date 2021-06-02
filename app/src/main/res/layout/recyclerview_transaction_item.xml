@@ -55,6 +55,6 @@
             android:gravity="left|center_vertical"
             android:paddingLeft="10dp"
             android:text="799,336.887"
-            android:textColor="#FFFFFF" />
+            android:textColor="@color/upbit_light_gray" />
     </LinearLayout>
 </LinearLayout>
