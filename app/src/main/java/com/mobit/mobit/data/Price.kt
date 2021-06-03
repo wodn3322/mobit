@@ -13,7 +13,7 @@ changePrice : 부호가 있는 변화액
 changeRate : 부호가 있는 변화율
 totalTradeVolume : 누적 거래량(UTC 0시 기준)
 totalTradePrice : 누적 거래대금(UTC 0시 기준)
-totalTradePrice24: 24시간 누적 거래량
+totalTradePrice24: 24시간 누적 거래대금
 highestWeekPrice : 52주 신고가
 highestWeekDate: 52주 신고가 달성일 "yyyy-MM-dd"
 lowestWeekPrice : 52주 신저가
