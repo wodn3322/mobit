@@ -66,22 +66,22 @@ class FragmentRecordAdapter(
             Transaction.ASK -> {
                 holder.typeView.text = "매도"
                 holder.typeView.setTextColor(Color.rgb(26, 96, 184))
-                holder.totalPriceView.text = formatter.format(tradePrice - fee)
+                holder.totalPriceView.text = "${formatter.format(tradePrice - fee)} KRW"
             }
             // 매수
             Transaction.BID -> {
                 holder.typeView.text = "매수"
                 holder.typeView.setTextColor(Color.rgb(188, 79, 59))
-                holder.totalPriceView.text = formatter.format(tradePrice + fee)
+                holder.totalPriceView.text = "${formatter.format(tradePrice + fee)} KRW"
             }
         }
 
         val times = filteredList[position].time.split("T")
         holder.timeView.text = "${times[0]} ${times[1].substring(0, 5)}"
-        holder.tradePriceView.text = formatter.format(tradePrice)
-        holder.tradeNumView.text = formatter3.format(filteredList[position].quantity)
-        holder.unitPriceView.text = formatter.format(filteredList[position].unitPrice)
-        holder.feeView.text = formatter2.format(fee)
+        holder.tradePriceView.text = "${formatter.format(tradePrice)} KRW"
+        holder.tradeNumView.text = "${formatter3.format(filteredList[position].quantity)} KRW"
+        holder.unitPriceView.text = "${formatter.format(filteredList[position].unitPrice)} KRW"
+        holder.feeView.text = "${formatter2.format(fee)} KRW"
     }
 
     override fun getItemCount(): Int {
