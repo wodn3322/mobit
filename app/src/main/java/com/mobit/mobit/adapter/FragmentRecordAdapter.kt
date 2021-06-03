@@ -79,7 +79,7 @@ class FragmentRecordAdapter(
         val times = filteredList[position].time.split("T")
         holder.timeView.text = "${times[0]} ${times[1].substring(0, 5)}"
         holder.tradePriceView.text = "${formatter.format(tradePrice)} KRW"
-        holder.tradeNumView.text = "${formatter3.format(filteredList[position].quantity)} KRW"
+        holder.tradeNumView.text = "${formatter3.format(filteredList[position].quantity)} $code"
         holder.unitPriceView.text = "${formatter.format(filteredList[position].unitPrice)} KRW"
         holder.feeView.text = "${formatter2.format(fee)} KRW"
     }
