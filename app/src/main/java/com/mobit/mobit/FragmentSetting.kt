@@ -65,9 +65,21 @@ class FragmentSetting : Fragment() {
                 when (guideLayout.visibility) {
                     View.VISIBLE -> {
                         guideLayout.visibility = View.GONE
+                        guideTitle.setCompoundDrawablesWithIntrinsicBounds(
+                            0,
+                            0,
+                            R.drawable.ic_baseline_keyboard_arrow_down_24,
+                            0
+                        )
                     }
                     View.GONE -> {
                         guideLayout.visibility = View.VISIBLE
+                        guideTitle.setCompoundDrawablesWithIntrinsicBounds(
+                            0,
+                            0,
+                            R.drawable.ic_baseline_keyboard_arrow_up_24,
+                            0
+                        )
                     }
                 }
             }
