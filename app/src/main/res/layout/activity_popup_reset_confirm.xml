@@ -59,7 +59,8 @@
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
         android:background="@drawable/popup_buy_sell_linearlayout_border"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="2dp">
 
         <Button
             android:id="@+id/cancelBtn"
