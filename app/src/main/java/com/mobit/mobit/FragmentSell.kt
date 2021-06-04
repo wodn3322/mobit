@@ -73,6 +73,11 @@ class FragmentSell : Fragment() {
                         fee,
                         price - fee
                     )
+                    coinAsset = myViewModel.askCoin(
+                        code,
+                        orderPrice,
+                        orderCount
+                    )
                     myViewModel.addTransaction(transaction)
                     val thread = object : Thread() {
                         override fun run() {
@@ -231,13 +236,13 @@ class FragmentSell : Fragment() {
                         }
                     }
 
-                    coinAsset = myViewModel.asset.value!!.askCoin(
+
+                    val flag = myViewModel.asset.value!!.canAskCoin(
                         coin!!.code,
                         this@FragmentSell.orderPrice,
                         this@FragmentSell.orderCount
                     )
-                    Log.i("FragmentSell", coinAsset.toString())
-                    if (coinAsset != null) {
+                    if (flag) {
                         val intent: Intent = Intent(context, PopupBuySellActivity::class.java)
                         intent.putExtra("type", 2)
                         intent.putExtra("code", coin!!.code)

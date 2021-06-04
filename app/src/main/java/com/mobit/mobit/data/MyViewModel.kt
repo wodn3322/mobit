@@ -65,7 +65,12 @@ class MyViewModel : ViewModel() {
         if (favoriteCoinInfo.value!!.contains(coinInfo))
             return false
 
-        return favoriteCoinInfo.value!!.add(coinInfo)
+        val temp = ArrayList<CoinInfo>()
+        temp.addAll(favoriteCoinInfo.value!!)
+        temp.add(coinInfo)
+        this.favoriteCoinInfo.value = temp
+
+        return true
     }
 
     fun removeFavoriteCoinInfo(coinInfo: CoinInfo): Boolean {
@@ -75,6 +80,25 @@ class MyViewModel : ViewModel() {
         if (!favoriteCoinInfo.value!!.contains(coinInfo))
             return false
 
-        return favoriteCoinInfo.value!!.remove(coinInfo)
+        val temp = ArrayList<CoinInfo>()
+        temp.addAll(favoriteCoinInfo.value!!)
+        temp.remove(coinInfo)
+        favoriteCoinInfo.value = temp
+
+        return true
+    }
+
+    fun bidCoin(code: String, name: String, price: Double, number: Double): Int {
+        val temp = this.asset.value!!
+        val ret = temp.bidCoin(code, name, price, number)
+        this.asset.value = temp
+        return ret
+    }
+
+    fun askCoin(code: String, price: Double, number: Double): CoinAsset? {
+        val temp = this.asset.value!!
+        val ret = temp.askCoin(code, price, number)
+        this.asset.value = temp
+        return ret
     }
 }

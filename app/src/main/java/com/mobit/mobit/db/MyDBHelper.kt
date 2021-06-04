@@ -193,6 +193,16 @@ class MyDBHelper(val context: Context) : SQLiteOpenHelper(context, DB_NAME, null
         return ret
     }
 
+    fun findCoinAsset(code: String): Boolean {
+        val strsql = "select * from ${TABLE_NAME[2]} where $CODE='$code';"
+        val db = readableDatabase
+        val cursor = db.rawQuery(strsql, null)
+        val ret = cursor.count != 0
+        cursor.close()
+        db.close()
+        return ret
+    }
+
     // DB에 trasaction을 JSONObject 형태의 string으로 저장
     fun insertTransaction(transaction: Transaction): Boolean {
         val values = ContentValues()

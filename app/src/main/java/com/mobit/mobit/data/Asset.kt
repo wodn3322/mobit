@@ -1,6 +1,8 @@
 package com.mobit.mobit.data
 
-class Asset {
+import java.io.Serializable
+
+class Asset : Serializable {
 
     constructor(krw: Double, coins: ArrayList<CoinAsset>) {
         this.krw = krw
@@ -9,6 +11,16 @@ class Asset {
 
     var krw: Double = 0.0   // 보유 KRW 금액
     val coins: ArrayList<CoinAsset> = ArrayList()   // 보유 코인 자산
+
+    fun canBidCoin(code: String, name: String, price: Double, number: Double): Boolean {
+        val orderPrice = price * number
+        val fee = orderPrice * 0.0005
+
+        if (krw < orderPrice + fee)
+            return false
+
+        return true
+    }
 
     // code에 해당하는 코인을 price 가격으로 number개 만큼 매수한다.
     // 매수한 코인의 인덱스를 리턴한다.
@@ -39,6 +51,24 @@ class Asset {
             ret = index
         }
         return ret
+    }
+
+    fun canAskCoin(code: String, price: Double, number: Double): Boolean {
+        var index: Int = -1
+        for (i in coins.indices) {
+            if (coins[i].code == code) {
+                index = i
+                break
+            }
+        }
+        if (index == -1)
+            return false
+
+        val coin = coins[index]
+        if (coin!!.number < number)
+            return false
+
+        return true
     }
 
     // code에 해당하는 코인을 price 가격으로 number개 만큼 매도한다.

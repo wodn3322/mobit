@@ -35,7 +35,7 @@ class FragmentInvestment : Fragment() {
 
     fun init() {
         binding.apply {
-            viewPager.adapter = InvestmentStateAdapter(activity!!)
+            viewPager.adapter = InvestmentStateAdapter(requireActivity())
             TabLayoutMediator(tabLayout, viewPager) { tab, position ->
                 tab.text = when (position) {
                     0 -> getString(R.string.investment_tab1)

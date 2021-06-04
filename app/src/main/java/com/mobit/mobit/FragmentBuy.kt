@@ -71,6 +71,14 @@ class FragmentBuy : Fragment() {
                         fee,
                         price + fee
                     )
+
+                    buyIndex = myViewModel.bidCoin(
+                        code,
+                        name,
+                        orderPrice,
+                        orderCount
+                    )
+
                     myViewModel.addTransaction(transaction)
                     val thread = object : Thread() {
                         override fun run() {
@@ -78,16 +86,14 @@ class FragmentBuy : Fragment() {
                             myViewModel.myDBHelper!!.insertTransaction(transaction)
 
                             val size = myViewModel.asset.value!!.coins.size
-                            if (buyIndex == size - 1) {
-                                val ret =
-                                    myViewModel.myDBHelper!!.insertCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
-                                Log.i("insertCoinAsset", ret.toString())
-                            } else if (buyIndex < size - 1) {
+                            if (myViewModel.myDBHelper!!.findCoinAsset(code)) {
                                 val ret =
                                     myViewModel.myDBHelper!!.updateCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
                                 Log.i("updateCoinAsset", ret.toString())
                             } else {
-                                Log.e("FragmentBuy index", buyIndex.toString())
+                                val ret =
+                                    myViewModel.myDBHelper!!.insertCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
+                                Log.i("insertCoinAsset", ret.toString())
                             }
                         }
                     }
@@ -222,13 +228,13 @@ class FragmentBuy : Fragment() {
                         }
                     }
 
-                    buyIndex = myViewModel.asset.value!!.bidCoin(
+                    val flag = myViewModel.asset.value!!.canBidCoin(
                         coin!!.code,
                         coin!!.name,
                         this@FragmentBuy.orderPrice,
                         this@FragmentBuy.orderCount
                     )
-                    if (buyIndex != -1) {
+                    if (flag) {
                         val intent: Intent = Intent(context, PopupBuySellActivity::class.java)
                         intent.putExtra("type", 1)
                         intent.putExtra("code", coin!!.code)
