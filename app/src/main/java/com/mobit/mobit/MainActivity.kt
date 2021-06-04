@@ -206,19 +206,7 @@ class MainActivity : AppCompatActivity() {
                     val favoriteCoinInfo =
                         bundle.getSerializable("favoriteCoinInfo") as ArrayList<CoinInfo>
                     myViewModel.setFavoriteCoinInfo(favoriteCoinInfo)
-
-                    // 임시방편으로 코드를 구현해놓긴 했지만, 나중에 Asset 클래스 구조를 수정해야 할 필요는 있다.
-                    val asset = Asset(myViewModel.asset.value!!.krw, ArrayList<CoinAsset>())
-                    for (i in myViewModel.asset.value!!.coins.indices) {
-                        for (coin in coinInfo) {
-                            if (myViewModel.asset.value!!.coins[i].code == coin.code) {
-                                myViewModel.asset.value!!.coins[i].amount =
-                                    coin.price.realTimePrice * myViewModel.asset.value!!.coins[i].number
-                                asset.coins.add(myViewModel.asset.value!!.coins[i])
-                                break
-                            }
-                        }
-                    }
+                    val asset = bundle.getSerializable("asset") as Asset
                     myViewModel.setAsset(asset)
                 } else if (type == 200 && isSuccess) {
                     val orderBook = bundle.getSerializable("orderBook") as ArrayList<OrderBook>
@@ -258,6 +246,20 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                         bundle.putSerializable("favoriteCoinInfo", favoriteCoinInfo)
+
+                        // 임시방편으로 코드를 구현해놓긴 했지만, 나중에 Asset 클래스 구조를 수정해야 할 필요는 있다.
+                        val asset = Asset(myViewModel.asset.value!!.krw, ArrayList<CoinAsset>())
+                        for (i in myViewModel.asset.value!!.coins.indices) {
+                            for (coin in coinInfo) {
+                                if (myViewModel.asset.value!!.coins[i].code == coin.code) {
+                                    myViewModel.asset.value!!.coins[i].amount =
+                                        coin.price.realTimePrice * myViewModel.asset.value!!.coins[i].number
+                                    asset.coins.add(myViewModel.asset.value!!.coins[i])
+                                    break
+                                }
+                            }
+                        }
+                        bundle.putSerializable("asset", asset)
                     } else {
                         bundle.putBoolean("isSuccess", false)
                     }
