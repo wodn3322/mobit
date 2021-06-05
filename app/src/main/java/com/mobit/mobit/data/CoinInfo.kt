@@ -28,5 +28,25 @@ data class CoinInfo(
         val LINK_NAME = "체인링크"
         val ETC_CODE = "KRW-ETC"        // 이더리움클래식
         val ETC_NAME = "이더리움클래식"
+        val THETA_CODE = "KRW-THETA"    // 쎄타토큰
+        val THETA_NAME = "쎄타토큰"
+        val XLM_CODE = "KRW-XLM"        // 스텔라루멘
+        val XLM_NAME = "스텔라루멘"
+        val VET_CODE = "KRW-VET"        // 비체인
+        val VET_NAME = "비체인"
+        val EOS_CODE = "KRW-EOS"        // 이오스
+        val EOS_NAME = "이오스"
+        val TRX_CODE = "KRW-TRX"        // 트론
+        val TRX_NAME = "트론"
+        val NEO_CODE = "KRW-NEO"        // 네오
+        val NEO_NAME = "네오"
+        val IOTA_CODE = "KRW-IOTA"      // 아이오타
+        val IOTA_NAME = "아이오타"
+        val ATOM_CODE = "KRW-ATOM"      // 코스모스
+        val ATOM_NAME = "코스모스"
+        val BSV_CODE = "KRW-BSV"        // 비트코인에스브이
+        val BSV_NAME = "비트코인에스브이"
+        val BTT_CODE = "KRW-BTT"        // 비트토렌트
+        val BTT_NAME = "비트토렌트"
     }
 }

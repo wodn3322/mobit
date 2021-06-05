@@ -54,7 +54,10 @@ class FragmentAssetAdapter(var items: ArrayList<CoinAsset>) :
         holder.codeView.text = "($code)"
         holder.retainedNumView.text =
             "${formatter3.format(items[position].number)} $code"
-        holder.averagePriceView.text = "${formatter.format(items[position].averagePrice)} KRW"
+        holder.averagePriceView.text =
+            if (items[position].averagePrice > 100.0)
+                "${formatter.format(items[position].averagePrice)} KRW"
+            else "${formatter2.format(items[position].averagePrice)} KRW"
         holder.evaluationView.text = "${formatter.format(items[position].amount)} KRW"
 
         val buyPrice = items[position].averagePrice * items[position].number

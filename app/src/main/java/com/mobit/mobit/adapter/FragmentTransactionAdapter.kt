@@ -58,7 +58,8 @@ class FragmentTransactionAdapter(var items: ArrayList<OrderBook>, val openPrice:
 
         val price = items[position].price
         val priceRate = (price - openPrice) / openPrice * 100
-        holder.price.text = formatter.format(price)
+        holder.price.text =
+            if (price > 100.0) formatter.format(price) else changeFormatter.format(price)
         holder.priceRate.text = changeFormatter.format(priceRate)
         holder.orderSize.text = changeFormatter.format(items[position].size)
 

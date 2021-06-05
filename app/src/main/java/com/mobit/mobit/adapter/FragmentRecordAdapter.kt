@@ -80,7 +80,10 @@ class FragmentRecordAdapter(
         holder.timeView.text = "${times[0]} ${times[1].substring(0, 5)}"
         holder.tradePriceView.text = "${formatter.format(tradePrice)} KRW"
         holder.tradeNumView.text = "${formatter3.format(filteredList[position].quantity)} $code"
-        holder.unitPriceView.text = "${formatter.format(filteredList[position].unitPrice)} KRW"
+        holder.unitPriceView.text =
+            if (filteredList[position].unitPrice > 100.0)
+                "${formatter.format(filteredList[position].unitPrice)} KRW"
+            else "${formatter2.format(filteredList[position].unitPrice)} KRW"
         holder.feeView.text = "${formatter2.format(fee)} KRW"
     }
 

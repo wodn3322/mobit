@@ -69,7 +69,11 @@ class FragmentCoinListAdapter(
 
         holder.korCoinName.text = filteredItems[position].name
         holder.engCoinName.text = filteredItems[position].code.split('-')[1] + "/KRW"
-        holder.realTimePrice.text = formatter.format(filteredItems[position].price.endPrice.toInt())
+        holder.realTimePrice.text =
+            if (filteredItems[position].price.realTimePrice > 100.0)
+                formatter.format(filteredItems[position].price.realTimePrice)
+            else
+                changeFormatter.format(filteredItems[position].price.realTimePrice)
         holder.changeRate.text =
             changeFormatter.format(filteredItems[position].price.changeRate * 100) + "%"
         var temp = (filteredItems[position].price.totalTradePrice24 / 100000).toInt()
