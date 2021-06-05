@@ -1,5 +1,6 @@
 package com.mobit.mobit.data
 
+import android.util.Log
 import java.io.Serializable
 
 class Asset : Serializable {
@@ -41,15 +42,17 @@ class Asset : Serializable {
 
         var ret: Int = 0
         if (index == -1) {
-            val newCoin = CoinAsset(code, name, number, price * number, price)
+            val newCoin = CoinAsset(code, name, number, number * price, price)
             coins.add(newCoin)
             ret = coins.indexOf(newCoin)
         } else {
+            coins[index].averagePrice =
+                (coins[index].number * coins[index].averagePrice + orderPrice) / (coins[index].number + number)
             coins[index].number += number
             coins[index].amount += price * number
-            coins[index].averagePrice = coins[index].amount / coins[index].number
             ret = index
         }
+        Log.i("bidCoin in Asset", coins[ret].number.toString())
         return ret
     }
 
@@ -100,7 +103,6 @@ class Asset : Serializable {
         } else {
             coins[index].number -= number
             coins[index].amount -= (price * number)
-            coins[index].averagePrice = coins[index].amount / coins[index].number
             ret = coins[index]
         }
 

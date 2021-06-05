@@ -54,7 +54,6 @@ class FragmentSell : Fragment() {
         binding = FragmentSellBinding.inflate(layoutInflater)
         getContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             binding.orderCount.clearFocus()
-            Log.i("resultCode", it.resultCode.toString())
             when (it.resultCode) {
                 Activity.RESULT_OK -> {
                     val code = it.data!!.getStringExtra("code")
@@ -206,7 +205,6 @@ class FragmentSell : Fragment() {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     if (s.isNullOrEmpty()) {
                         this@FragmentSell.orderCount = 0.0
-                        orderCount.setText("0")
                     } else {
                         this@FragmentSell.orderCount = s.toString().replace(",", "").toDouble()
                         if (this@FragmentSell.orderCount < 0) {
@@ -219,6 +217,22 @@ class FragmentSell : Fragment() {
                 }
 
                 override fun afterTextChanged(s: Editable?) {}
+            })
+            orderCount.setOnFocusChangeListener(object : View.OnFocusChangeListener {
+                override fun onFocusChange(v: View?, hasFocus: Boolean) {
+                    if (v != null) {
+                        if (!hasFocus) {
+                            val text = orderCount.text.toString()
+                            if (text.isNotEmpty()) {
+                                val number = text.replace(",", "").toDouble()
+                                this@FragmentSell.orderCount = if (number > 0.0) number else 0.0
+                            } else {
+                                this@FragmentSell.orderCount = 0.0
+                                orderCount.setText("0")
+                            }
+                        }
+                    }
+                }
             })
             // 주문 개수와 주문 가격 초기화
             resetBtn.setOnClickListener {

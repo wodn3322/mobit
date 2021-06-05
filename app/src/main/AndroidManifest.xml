@@ -11,6 +11,11 @@
         android:roundIcon="@mipmap/ic_launcher_logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Mobit">
+        <service
+            android:name=".service.UpbitAPIService"
+            android:enabled="true"
+            android:exported="true" />
+
         <activity
             android:name=".PopupResetConfirmActivity"
             android:theme="@android:style/Theme.Dialog" />

@@ -52,7 +52,6 @@ class FragmentBuy : Fragment() {
         binding = FragmentBuyBinding.inflate(layoutInflater)
         getContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             binding.orderCount.clearFocus()
-            Log.i("resultCode", it.resultCode.toString())
             when (it.resultCode) {
                 Activity.RESULT_OK -> {
                     val code = it.data!!.getStringExtra("code")
@@ -85,15 +84,12 @@ class FragmentBuy : Fragment() {
                             myViewModel.myDBHelper!!.setKRW(myViewModel.asset.value!!.krw)
                             myViewModel.myDBHelper!!.insertTransaction(transaction)
 
-                            val size = myViewModel.asset.value!!.coins.size
                             if (myViewModel.myDBHelper!!.findCoinAsset(code)) {
                                 val ret =
                                     myViewModel.myDBHelper!!.updateCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
-                                Log.i("updateCoinAsset", ret.toString())
                             } else {
                                 val ret =
                                     myViewModel.myDBHelper!!.insertCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
-                                Log.i("insertCoinAsset", ret.toString())
                             }
                         }
                     }
@@ -139,8 +135,6 @@ class FragmentBuy : Fragment() {
         )
 
         binding.apply {
-            Log.i("canOrderPrice", myViewModel.asset.value!!.krw.toString())
-            Log.i("canOrderPriceFormat", formatter.format(myViewModel.asset.value!!.krw))
             canOrderPrice.text = "${formatter.format(myViewModel.asset.value!!.krw)}KRW"
             orderCountSpinner.adapter = spinnerAdapter
             orderCountSpinner.setSelection(0, false)
@@ -194,7 +188,6 @@ class FragmentBuy : Fragment() {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     if (s.isNullOrEmpty()) {
                         this@FragmentBuy.orderCount = 0.0
-                        orderCount.setText("0")
                     } else {
                         this@FragmentBuy.orderCount = s.toString().replace(",", "").toDouble()
                         if (this@FragmentBuy.orderCount < 0) {
@@ -202,15 +195,27 @@ class FragmentBuy : Fragment() {
                             orderCount.setText("0")
                         }
                     }
-                    Log.i(
-                        "orderCount",
-                        this@FragmentBuy.orderCount.toString().toDouble().toString()
-                    )
                     val totalPrice = this@FragmentBuy.orderCount * this@FragmentBuy.orderPrice
                     orderTotalPrice.text = "${formatter.format(totalPrice)}KRW"
                 }
 
                 override fun afterTextChanged(s: Editable?) {}
+            })
+            orderCount.setOnFocusChangeListener(object : View.OnFocusChangeListener {
+                override fun onFocusChange(v: View?, hasFocus: Boolean) {
+                    if (v != null) {
+                        if (!hasFocus) {
+                            val text = orderCount.text.toString()
+                            if (text.isNotEmpty()) {
+                                val number = text.replace(",", "").toDouble()
+                                this@FragmentBuy.orderCount = if (number > 0.0) number else 0.0
+                            } else {
+                                this@FragmentBuy.orderCount = 0.0
+                                orderCount.setText("0")
+                            }
+                        }
+                    }
+                }
             })
             // 주문 개수와 주문 가격 초기화
             resetBtn.setOnClickListener {

@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mobit.mobit.adapter.FragmentAssetAdapter
+import com.mobit.mobit.data.Asset
 import com.mobit.mobit.data.CoinAsset
 import com.mobit.mobit.data.MyViewModel
 import com.mobit.mobit.databinding.FragmentAssetBinding
@@ -95,6 +96,24 @@ class FragmentAsset : Fragment() {
                     yieldView.setTextColor(rgb)
                 }
             }
+
+            retainedCoin.clear()
+            retainedCoin.addAll(myViewModel.asset.value!!.coins)
+            adapter.notifyDataSetChanged()
+        })
+        myViewModel.coinInfo.observe(viewLifecycleOwner, Observer {
+            val asset2 = Asset(myViewModel.asset.value!!.krw, ArrayList<CoinAsset>())
+            for (i in myViewModel.asset.value!!.coins.indices) {
+                for (coinInfo in it) {
+                    if (myViewModel.asset.value!!.coins[i].code == coinInfo.code) {
+                        myViewModel.asset.value!!.coins[i].amount =
+                            myViewModel.asset.value!!.coins[i].number * coinInfo.price.realTimePrice
+                        asset2.coins.add(myViewModel.asset.value!!.coins[i])
+                        break
+                    }
+                }
+            }
+            myViewModel.setAsset(asset2)
 
             retainedCoin.clear()
             retainedCoin.addAll(myViewModel.asset.value!!.coins)

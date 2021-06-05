@@ -1,6 +1,9 @@
 package com.mobit.mobit
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -13,7 +16,7 @@ import androidx.fragment.app.Fragment
 import com.mobit.mobit.data.*
 import com.mobit.mobit.databinding.ActivityMainBinding
 import com.mobit.mobit.db.MyDBHelper
-import com.mobit.mobit.network.UpbitAPICaller
+import com.mobit.mobit.service.UpbitAPIService
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -32,30 +35,9 @@ class MainActivity : AppCompatActivity() {
     // UI 변수 끝
 
     val myViewModel: MyViewModel by viewModels<MyViewModel>()
-    val upbitAPICaller: UpbitAPICaller = UpbitAPICaller()
-    val upbitAPIHandler: UpbitAPIHandler = UpbitAPIHandler()
-
-    // 코인 정보 가져오는 쓰레드
-    lateinit var upbitAPIThread: UpbitAPIThread
-
-    // 코인 호가 정보 가져오는 쓰레드
-    lateinit var upbitAPIThread2: UpbitAPIThread
 
     val dbHandler: DBHandler = DBHandler()
     lateinit var dbThread: DBThread
-
-    val codes: ArrayList<String> = arrayListOf(
-        CoinInfo.BTC_CODE,
-        CoinInfo.ETH_CODE,
-        CoinInfo.ADA_CODE,
-        CoinInfo.DOGE_CODE,
-        CoinInfo.XRP_CODE,
-        CoinInfo.DOT_CODE,
-        CoinInfo.BCH_CODE,
-        CoinInfo.LTC_CODE,
-        CoinInfo.LINK_CODE,
-        CoinInfo.ETC_CODE
-    )
 
     // 뒤로가기 두번 누르면 앱 종료 관련 변수 시작
     val FINISH_INTERVAL_TIME: Long = 2000
@@ -76,14 +58,43 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent != null) {
+                val mode = intent.getStringExtra("mode")
+                when (mode) {
+                    "CoinInfo" -> {
+                        val isSuccess = intent.getBooleanExtra("isSuccess", false)
+                        if (isSuccess) {
+                            val coinInfo =
+                                intent.getSerializableExtra("coinInfo") as ArrayList<CoinInfo>
+                            val favoriteCoinInfo =
+                                intent.getSerializableExtra("favoriteCoinInfo") as ArrayList<CoinInfo>
+                            myViewModel.setCoinInfo(coinInfo)
+                            myViewModel.setFavoriteCoinInfo(favoriteCoinInfo)
+                        }
+                    }
+                    "orderBook" -> {
+                        val isSuccess = intent.getBooleanExtra("isSuccess", false)
+                        if (isSuccess) {
+                            val orderBook =
+                                intent.getSerializableExtra("orderBook") as ArrayList<OrderBook>
+                            myViewModel.setOrderBook(orderBook)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
-//        setTheme(R.style.Theme_Mobit)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         initDB()
         initData()
+        initService()
         init()
     }
 
@@ -100,31 +111,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        upbitAPIThread.threadStop(true)
-        upbitAPIThread2.threadStop(true)
-    }
-
     override fun onRestart() {
         super.onRestart()
-        val thread: Thread = object : Thread() {
-            override fun run() {
-                if (upbitAPIThread.isAlive) {
-                    try {
-                        upbitAPIThread.join()
-                        upbitAPIThread2.join()
-                    } catch (e: InterruptedException) {
-                        Log.e("OnRestart Error", e.toString())
-                    }
-                }
-                upbitAPIThread = UpbitAPIThread(100, codes)
-                upbitAPIThread.start()
-                upbitAPIThread2 = UpbitAPIThread(200, codes)
-                upbitAPIThread2.start()
-            }
-        }
-        thread.start()
+
+        val serviceBRIntent = Intent(this, UpbitAPIService::class.java)
+        serviceBRIntent.putExtra("mode", "START")
+        sendBroadcast(serviceBRIntent)
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        val serviceBRIntent = Intent(this, UpbitAPIService::class.java)
+        serviceBRIntent.putExtra("mode", "STOP")
+        sendBroadcast(serviceBRIntent)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(receiver)
     }
 
     fun initDB() {
@@ -137,14 +142,29 @@ class MainActivity : AppCompatActivity() {
         myViewModel.setSelectedCoin(CoinInfo.BTC_CODE)
         myViewModel.setFavoriteCoinInfo(ArrayList<CoinInfo>())
         myViewModel.setOrderBook(ArrayList<OrderBook>())
+        myViewModel.setAsset(Asset(0.0, ArrayList<CoinAsset>()))
+    }
 
-        upbitAPIThread = UpbitAPIThread(100, codes)
-        upbitAPIThread.start()
-        upbitAPIThread2 = UpbitAPIThread(200, codes)
-        upbitAPIThread2.start()
+    fun initService() {
+        registerReceiver(receiver, IntentFilter("com.mobit.APIRECEIVE"))
+        val intent = Intent(this, UpbitAPIService::class.java)
+        startService(intent)
     }
 
     fun init() {
+        myViewModel.selectedCoin.observe(this, androidx.lifecycle.Observer {
+            val serviceBRIntent = Intent("com.mobit.APICALL")
+            serviceBRIntent.putExtra("mode", "SELECTED_COIN_SETTING")
+            serviceBRIntent.putExtra("selectedCoin", myViewModel.selectedCoin.value!!)
+            sendBroadcast(serviceBRIntent)
+        })
+        myViewModel.favoriteCoinInfo.observe(this, androidx.lifecycle.Observer {
+            val serviceBRIntent = Intent("com.mobit.APICALL")
+            serviceBRIntent.putExtra("mode", "FAVORITE_COININFO_SETTING")
+            serviceBRIntent.putExtra("favoriteCoinInfo", myViewModel.favoriteCoinInfo.value!!)
+            sendBroadcast(serviceBRIntent)
+        })
+
         replaceFragment(fragmentCoinList)
         binding.apply {
             bottomNavBar.setOnNavigationItemSelectedListener {
@@ -191,118 +211,6 @@ class MainActivity : AppCompatActivity() {
         fragmentTransaction.commit()
     }
 
-    inner class UpbitAPIHandler() : Handler() {
-
-        override fun handleMessage(msg: Message) {
-            super.handleMessage(msg)
-
-            val bundle: Bundle = msg.data
-            if (!bundle.isEmpty) {
-                val type = bundle.getInt("type")
-                val isSuccess = bundle.getBoolean("isSuccess")
-                if (type == 100 && isSuccess) {
-                    val coinInfo = bundle.getSerializable("coinInfo") as ArrayList<CoinInfo>
-                    myViewModel.setCoinInfo(coinInfo)
-                    val favoriteCoinInfo =
-                        bundle.getSerializable("favoriteCoinInfo") as ArrayList<CoinInfo>
-                    myViewModel.setFavoriteCoinInfo(favoriteCoinInfo)
-                    val asset = bundle.getSerializable("asset") as Asset
-                    myViewModel.setAsset(asset)
-                } else if (type == 200 && isSuccess) {
-                    val orderBook = bundle.getSerializable("orderBook") as ArrayList<OrderBook>
-                    myViewModel.setOrderBook(orderBook)
-                }
-            }
-        }
-    }
-
-    inner class UpbitAPIThread(var type: Int, val codes: ArrayList<String>) : Thread() {
-
-        var stopFlag: Boolean = false
-
-        override fun run() {
-            while (!stopFlag) {
-                val message: Message = upbitAPIHandler.obtainMessage()
-                val bundle: Bundle = Bundle()
-                // 코인 정보 받아오기
-                if (type == 100) {
-                    bundle.putInt("type", type)
-                    val prices = upbitAPICaller.getTicker(codes)
-                    if (prices.isNotEmpty()) {
-                        val coinInfo = ArrayList<CoinInfo>()
-                        for (i in prices.indices) {
-                            coinInfo.add(CoinInfo(codes[i], getCoinName(codes[i]), prices[i]))
-                        }
-                        bundle.putSerializable("coinInfo", coinInfo)
-                        bundle.putBoolean("isSuccess", true)
-
-                        val favoriteCoinInfo = ArrayList<CoinInfo>()
-                        for (favorite in myViewModel.favoriteCoinInfo.value!!) {
-                            for (coin in coinInfo) {
-                                if (favorite.code == coin.code) {
-                                    favoriteCoinInfo.add(coin)
-                                    break
-                                }
-                            }
-                        }
-                        bundle.putSerializable("favoriteCoinInfo", favoriteCoinInfo)
-
-                        // 임시방편으로 코드를 구현해놓긴 했지만, 나중에 Asset 클래스 구조를 수정해야 할 필요는 있다.
-                        val asset = Asset(myViewModel.asset.value!!.krw, ArrayList<CoinAsset>())
-                        for (i in myViewModel.asset.value!!.coins.indices) {
-                            for (coin in coinInfo) {
-                                if (myViewModel.asset.value!!.coins[i].code == coin.code) {
-                                    myViewModel.asset.value!!.coins[i].amount =
-                                        coin.price.realTimePrice * myViewModel.asset.value!!.coins[i].number
-                                    asset.coins.add(myViewModel.asset.value!!.coins[i])
-                                    break
-                                }
-                            }
-                        }
-                        bundle.putSerializable("asset", asset)
-                    } else {
-                        bundle.putBoolean("isSuccess", false)
-                    }
-                }
-                // 호가 정보 받아오기
-                else if (type == 200) {
-                    bundle.putInt("type", type)
-                    val orderBook = upbitAPICaller.getOrderbook(myViewModel.selectedCoin.value!!)
-                    if (orderBook.isNotEmpty()) {
-                        bundle.putSerializable("orderBook", orderBook)
-                        bundle.putBoolean("isSuccess", true)
-                    } else {
-                        bundle.putBoolean("isSuccess", false)
-                    }
-                }
-
-                message.data = bundle
-                upbitAPIHandler.sendMessage(message)
-                sleep(300)
-            }
-        }
-
-        fun getCoinName(code: String): String {
-            return when (code) {
-                CoinInfo.BTC_CODE -> CoinInfo.BTC_NAME
-                CoinInfo.ETH_CODE -> CoinInfo.ETH_NAME
-                CoinInfo.ADA_CODE -> CoinInfo.ADA_NAME
-                CoinInfo.DOGE_CODE -> CoinInfo.DOGE_NAME
-                CoinInfo.XRP_CODE -> CoinInfo.XRP_NAME
-                CoinInfo.DOT_CODE -> CoinInfo.DOT_NAME
-                CoinInfo.BCH_CODE -> CoinInfo.BCH_NAME
-                CoinInfo.LTC_CODE -> CoinInfo.LTC_NAME
-                CoinInfo.LINK_CODE -> CoinInfo.LINK_NAME
-                CoinInfo.ETC_CODE -> CoinInfo.ETC_NAME
-                else -> CoinInfo.BTC_NAME
-            }
-        }
-
-        fun threadStop(flag: Boolean) {
-            this.stopFlag = flag
-        }
-    }
-
     inner class DBHandler : Handler() {
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
@@ -315,7 +223,6 @@ class MainActivity : AppCompatActivity() {
                 val isTransaction = bundle.getBoolean("isTransactions")
 
                 if (isFavorites) {
-//                    favoriteCodes.addAll(bundle.getSerializable("favorites") as ArrayList<String>)
                     val favorites = bundle.getSerializable("favorites") as ArrayList<String>
                     val list = ArrayList<CoinInfo>()
                     for (code in favorites) {
@@ -378,6 +285,17 @@ class MainActivity : AppCompatActivity() {
                     val intent = Intent(this@MainActivity, FirstSettingActivity::class.java)
                     getContent.launch(intent)
                 }
+
+                val serviceBRIntent = Intent("com.mobit.APICALL")
+                serviceBRIntent.putExtra("mode", "INITIAL_SETTING")
+                serviceBRIntent.putExtra("selectedCoin", myViewModel.selectedCoin.value!!)
+                serviceBRIntent.putExtra("favoriteCoinInfo", myViewModel.favoriteCoinInfo.value!!)
+                serviceBRIntent.putExtra("asset", myViewModel.asset.value!!)
+                sendBroadcast(serviceBRIntent)
+
+                val serviceBRIntent2 = Intent("com.mobit.APICALL")
+                serviceBRIntent2.putExtra("mode", "START")
+                sendBroadcast(serviceBRIntent2)
             }
         }
     }
