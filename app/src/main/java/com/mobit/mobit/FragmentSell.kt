@@ -108,6 +108,14 @@ class FragmentSell : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.apply {
+            orderCount.setText("0")
+            orderCountSpinner.setSelection(0)
+        }
+    }
+
     fun init() {
         myViewModel.coinInfo.observe(viewLifecycleOwner, Observer {
             for (coinInfo in myViewModel.coinInfo.value!!) {

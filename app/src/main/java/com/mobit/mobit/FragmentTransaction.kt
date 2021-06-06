@@ -43,12 +43,19 @@ class FragmentTransaction : Fragment() {
 
     val myViewModel: MyViewModel by activityViewModels()
 
+    var doScrollVertically = true
     lateinit var adapter: FragmentTransactionAdapter        // 호가 정보 리스트 adapter
     var selectedCoin: CoinInfo? = null                      // CoinList에서 사용자가 선택한 코인의 정보
     val orderBook: ArrayList<OrderBook> =
         ArrayList()       // selectedCoin의 호가 정보를 갖는다. (내림차순으로 정렬되어 있음)
     // [0, 14] -> 매도 호가
     // [15, 29] -> 매수 호가
+
+    var listener: OnFragmentInteraction? = null      // MainActivity와 통신할 때 사용되는 interface
+
+    interface OnFragmentInteraction {
+        fun orderBookThreadStop()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,6 +66,23 @@ class FragmentTransaction : Fragment() {
         init()
 
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.buyAndSellGroup.check(R.id.coinBuyBtn)
+        fragmentState = FRAGMENT_BUY
+        replaceFragment(fragmentBuy)
+
+//        binding.recyclerView.scrollToPosition(6)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        listener?.orderBookThreadStop()
+//        myViewModel.setOrderBook(ArrayList<OrderBook>())
+        myViewModel.orderBook.value!!.clear()
+        doScrollVertically = true
     }
 
     fun init() {
@@ -88,10 +112,19 @@ class FragmentTransaction : Fragment() {
             }
         })
         myViewModel.orderBook.observe(viewLifecycleOwner, Observer {
-//            Log.i("FragmentTransaction","orderBook.observe() is called.")
             orderBook.clear()
             orderBook.addAll(myViewModel.orderBook.value!!)
             adapter.notifyDataSetChanged()
+
+            if (doScrollVertically && orderBook.isNotEmpty()) {
+                Log.i("FragmentTransaction", orderBook.size.toString())
+                binding.apply {
+                    // recyclerview에 있는 item들 중에서 가운데에 위치한 아이템이 화면의 중앙에 위치하도록 하고 싶은데 방법을 모르겠다.
+                    recyclerView.scrollToPosition(0)
+                    recyclerView.scrollToPosition(6)
+                }
+                doScrollVertically = false
+            }
         })
 
         for (coinInfo in myViewModel.coinInfo.value!!) {
@@ -107,8 +140,6 @@ class FragmentTransaction : Fragment() {
             recyclerView.layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             recyclerView.adapter = adapter
-            // recyclerview에 있는 item들 중에서 가운데에 위치한 아이템이 화면의 중앙에 위치하도록 하고 싶은데 방법을 모르겠다.
-            recyclerView.scrollToPosition(6)
 
             buyAndSellGroup.setOnCheckedChangeListener(object : RadioGroup.OnCheckedChangeListener {
                 override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {

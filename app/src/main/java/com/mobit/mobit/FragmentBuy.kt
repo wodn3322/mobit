@@ -112,7 +112,11 @@ class FragmentBuy : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        binding.canOrderPrice.text = "${formatter.format(myViewModel.asset.value!!.krw)}KRW"
+        binding.apply {
+            canOrderPrice.text = "${formatter.format(myViewModel.asset.value!!.krw)}KRW"
+            orderCount.setText("0")
+            orderCountSpinner.setSelection(0)
+        }
     }
 
     fun init() {

@@ -104,8 +104,46 @@ class UpbitAPIService : Service() {
                     }
                     thread.start()
                 }
+                "START_THREAD1" -> {
+                    val thread: Thread = object : Thread() {
+                        override fun run() {
+                            if (upbitAPIThread.isAlive) {
+                                try {
+                                    upbitAPIThread.join()
+                                } catch (e: InterruptedException) {
+                                    Log.e("OnRestart Error", e.toString())
+                                }
+                            }
+                            upbitAPIThread = UpbitAPIThread(100, codes)
+                            upbitAPIThread.start()
+                        }
+                    }
+                    thread.start()
+                }
+                "START_THREAD2" -> {
+                    val thread: Thread = object : Thread() {
+                        override fun run() {
+                            if (upbitAPIThread2.isAlive) {
+                                try {
+                                    upbitAPIThread2.join()
+                                } catch (e: InterruptedException) {
+                                    Log.e("OnRestart Error", e.toString())
+                                }
+                            }
+                            upbitAPIThread2 = UpbitAPIThread(200, codes)
+                            upbitAPIThread2.start()
+                        }
+                    }
+                    thread.start()
+                }
                 "STOP" -> {
                     upbitAPIThread.threadStop(true)
+                    upbitAPIThread2.threadStop(true)
+                }
+                "STOP_THREAD1" -> {
+                    upbitAPIThread.threadStop(true)
+                }
+                "STOP_THREAD2" -> {
                     upbitAPIThread2.threadStop(true)
                 }
             }

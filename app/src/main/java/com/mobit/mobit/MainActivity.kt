@@ -178,6 +178,10 @@ class MainActivity : AppCompatActivity() {
                         return@setOnNavigationItemSelectedListener true
                     }
                     R.id.menu_transaction -> {
+                        val serviceBTIntent = Intent("com.mobit.APICALL")
+                        serviceBTIntent.putExtra("mode", "START_THREAD2")
+                        sendBroadcast(serviceBTIntent)
+
                         replaceFragment(fragmentTransaction)
                         return@setOnNavigationItemSelectedListener true
                     }
@@ -200,6 +204,14 @@ class MainActivity : AppCompatActivity() {
             object : FragmentCoinList.OnFragmentInteraction {
                 override fun showTransaction() {
                     binding.bottomNavBar.selectedItemId = R.id.menu_transaction
+                }
+            }
+        (fragmentTransaction as FragmentTransaction).listener =
+            object : FragmentTransaction.OnFragmentInteraction {
+                override fun orderBookThreadStop() {
+                    val serviceBTIntent = Intent("com.mobit.APICALL")
+                    serviceBTIntent.putExtra("mode", "STOP_THREAD2")
+                    sendBroadcast(serviceBTIntent)
                 }
             }
     }
@@ -294,7 +306,7 @@ class MainActivity : AppCompatActivity() {
                 sendBroadcast(serviceBRIntent)
 
                 val serviceBRIntent2 = Intent("com.mobit.APICALL")
-                serviceBRIntent2.putExtra("mode", "START")
+                serviceBRIntent2.putExtra("mode", "START_THREAD1")
                 sendBroadcast(serviceBRIntent2)
             }
         }
