@@ -85,6 +85,19 @@ class FragmentChart : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        val thread = object : Thread() {
+            override fun run() {
+                if (!upbitCandleThread.isAlive) {
+                    upbitCandleThread = UpbitCandleThread()
+                    upbitCandleThread.start()
+                }
+            }
+        }
+        thread.start()
+    }
+
     override fun onStop() {
         super.onStop()
         upbitCandleThread.threadStop(true)
@@ -272,7 +285,7 @@ class FragmentChart : Fragment() {
             if (myViewModel.favoriteCoinInfo.value!!.contains(selectedCoin)) {
                 favoriteBtn.setImageResource(R.drawable.ic_round_star_24)
             }
-            favoriteBtn.setOnClickListener(object: View.OnClickListener{
+            favoriteBtn.setOnClickListener(object : View.OnClickListener {
                 override fun onClick(v: View?) {
                     // 즐겨찾기에 이미 추가되어 있는 경우
                     if (myViewModel.favoriteCoinInfo.value!!.contains(selectedCoin)) {
