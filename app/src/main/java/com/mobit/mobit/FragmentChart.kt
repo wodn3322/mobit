@@ -272,6 +272,8 @@ class FragmentChart : Fragment() {
             minuteBtn.setOnClickListener { view ->
                 if (minuteBtnFlag && unitFlag in UNIT_MIN_1..UNIT_MIN_240) {
                     setUnitMinBtn(view)
+                } else if (unitFlag in UNIT_MIN_1..UNIT_MIN_240) {
+                    minuteBtnFlag = true
                 }
             }
 
@@ -516,49 +518,42 @@ class FragmentChart : Fragment() {
                             upbitAPICaller.getCandleMinute(myViewModel.selectedCoin.value!!, 1)
                         bundle.putInt("unitFlag", unitFlag)
                         bundle.putSerializable("candles", candles)
-                        minuteBtnFlag = true
                     }
                     UNIT_MIN_3 -> {
                         val candles =
                             upbitAPICaller.getCandleMinute(myViewModel.selectedCoin.value!!, 3)
                         bundle.putInt("unitFlag", unitFlag)
                         bundle.putSerializable("candles", candles)
-                        minuteBtnFlag = true
                     }
                     UNIT_MIN_5 -> {
                         val candles =
                             upbitAPICaller.getCandleMinute(myViewModel.selectedCoin.value!!, 5)
                         bundle.putInt("unitFlag", unitFlag)
                         bundle.putSerializable("candles", candles)
-                        minuteBtnFlag = true
                     }
                     UNIT_MIN_10 -> {
                         val candles =
                             upbitAPICaller.getCandleMinute(myViewModel.selectedCoin.value!!, 10)
                         bundle.putInt("unitFlag", unitFlag)
                         bundle.putSerializable("candles", candles)
-                        minuteBtnFlag = true
                     }
                     UNIT_MIN_30 -> {
                         val candles =
                             upbitAPICaller.getCandleMinute(myViewModel.selectedCoin.value!!, 30)
                         bundle.putInt("unitFlag", unitFlag)
                         bundle.putSerializable("candles", candles)
-                        minuteBtnFlag = true
                     }
                     UNIT_MIN_60 -> {
                         val candles =
                             upbitAPICaller.getCandleMinute(myViewModel.selectedCoin.value!!, 60)
                         bundle.putInt("unitFlag", unitFlag)
                         bundle.putSerializable("candles", candles)
-                        minuteBtnFlag = true
                     }
                     UNIT_MIN_240 -> {
                         val candles =
                             upbitAPICaller.getCandleMinute(myViewModel.selectedCoin.value!!, 240)
                         bundle.putInt("unitFlag", unitFlag)
                         bundle.putSerializable("candles", candles)
-                        minuteBtnFlag = true
                     }
                     UNIT_DAY -> {
                         val candles =
