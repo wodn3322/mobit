@@ -172,25 +172,29 @@ class FragmentSell : Fragment() {
                     id: Long
                 ) {
                     var canOrderCount: Double = 0.0
-                    when (position) {
-                        // 최대
-                        0 -> {
-                            canOrderCount = selectedCoin!!.number
-                        }
-                        // 50%
-                        1 -> {
-                            canOrderCount = selectedCoin!!.number / 2
-                        }
-                        // 25%
-                        2 -> {
-                            canOrderCount = selectedCoin!!.number / 4
-                        }
-                        // 10%
-                        3 -> {
-                            canOrderCount = selectedCoin!!.number / 10
-                        }
-                        else -> {
-                            Log.e("FragmentSell Spinner", "position is $position")
+                    // 선택된 코인이 매수한 적 없는 코인인 경우,
+                    // selectedCoin은 null이 되므로 조건문을 추가해야 한다.
+                    if (selectedCoin != null) {
+                        when (position) {
+                            // 최대
+                            0 -> {
+                                canOrderCount = selectedCoin!!.number
+                            }
+                            // 50%
+                            1 -> {
+                                canOrderCount = selectedCoin!!.number / 2
+                            }
+                            // 25%
+                            2 -> {
+                                canOrderCount = selectedCoin!!.number / 4
+                            }
+                            // 10%
+                            3 -> {
+                                canOrderCount = selectedCoin!!.number / 10
+                            }
+                            else -> {
+                                Log.e("FragmentSell Spinner", "position is $position")
+                            }
                         }
                     }
                     orderCount.setText(formatter2.format(canOrderCount))
