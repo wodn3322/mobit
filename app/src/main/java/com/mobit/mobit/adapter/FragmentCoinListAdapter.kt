@@ -76,7 +76,7 @@ class FragmentCoinListAdapter(
                 changeFormatter.format(filteredItems[position].price.realTimePrice)
         holder.changeRate.text =
             changeFormatter.format(filteredItems[position].price.changeRate * 100) + "%"
-        var temp = (filteredItems[position].price.totalTradePrice24 / 100000).toInt()
+        var temp = (filteredItems[position].price.totalTradePrice24 / 1000000).toInt()
         holder.totalTradePrice.text = formatter.format(temp) + "백만"
 
         if (filteredItems[position].price.changeRate > 0) {

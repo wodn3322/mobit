@@ -9,9 +9,9 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
+        android:layout_weight="3"
         android:orientation="vertical"
-        android:paddingLeft="30dp">
+        android:paddingLeft="20dp">
 
         <TextView
             android:id="@+id/korCoinName"
@@ -36,29 +36,29 @@
         android:id="@+id/realTimePrice"
         android:layout_width="0dp"
         android:layout_height="40dp"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:gravity="right"
         android:paddingRight="10dp"
         android:text="592"
         android:textColor="@color/coin_list_blue"
-        android:textSize="12sp" />
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/changeRate"
         android:layout_width="0dp"
         android:layout_height="40dp"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:gravity="right"
         android:paddingRight="20dp"
         android:text="-7.21%"
         android:textColor="@color/coin_list_blue"
-        android:textSize="12sp" />
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/totalTradePrice"
         android:layout_width="0dp"
         android:layout_height="40dp"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:autoSizeMaxTextSize="14sp"
         android:autoSizeMinTextSize="6sp"
         android:autoSizeStepGranularity="1sp"
