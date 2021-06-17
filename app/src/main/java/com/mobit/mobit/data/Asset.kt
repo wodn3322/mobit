@@ -15,9 +15,8 @@ class Asset : Serializable {
 
     fun canBidCoin(code: String, name: String, price: Double, number: Double): Boolean {
         val orderPrice = price * number
-        val fee = orderPrice * 0.0005
 
-        if (krw < orderPrice + fee)
+        if (krw < orderPrice)
             return false
 
         return true
@@ -27,10 +26,9 @@ class Asset : Serializable {
     // 매수한 코인의 인덱스를 리턴한다.
     fun bidCoin(code: String, name: String, price: Double, number: Double): Int {
         val orderPrice = price * number
-        val fee = orderPrice * 0.0005
-        if (krw < orderPrice + fee)
+        if (krw < orderPrice)
             return -1
-        krw -= (orderPrice + fee)
+        krw -= orderPrice
 
         var index: Int = -1
         for (i in coins.indices) {

@@ -66,9 +66,9 @@ class FragmentBuy : Fragment() {
                         Transaction.BID,
                         orderCount,
                         orderPrice,
-                        price,
+                        price - fee,
                         fee,
-                        price + fee
+                        price
                     )
 
                     buyIndex = myViewModel.bidCoin(
@@ -228,7 +228,8 @@ class FragmentBuy : Fragment() {
             // 코인 매수
             buyBtn.setOnClickListener {
                 orderCount.clearFocus()
-                if (this@FragmentBuy.orderCount != 0.0 && this@FragmentBuy.orderCount * this@FragmentBuy.orderPrice >= 5000.0) {
+                val nowOrderPrice = this@FragmentBuy.orderPrice
+                if (this@FragmentBuy.orderCount != 0.0 && this@FragmentBuy.orderCount * nowOrderPrice >= 5000.0) {
                     var coin: CoinInfo? = null
                     for (coinInfo in myViewModel.coinInfo.value!!) {
                         if (coinInfo.code == myViewModel.selectedCoin.value!!) {
@@ -240,7 +241,7 @@ class FragmentBuy : Fragment() {
                     val flag = myViewModel.asset.value!!.canBidCoin(
                         coin!!.code,
                         coin!!.name,
-                        this@FragmentBuy.orderPrice,
+                        nowOrderPrice,
                         this@FragmentBuy.orderCount
                     )
                     if (flag) {
@@ -248,7 +249,7 @@ class FragmentBuy : Fragment() {
                         intent.putExtra("type", 1)
                         intent.putExtra("code", coin!!.code)
                         intent.putExtra("name", coin!!.name)
-                        intent.putExtra("unitPrice", this@FragmentBuy.orderPrice)
+                        intent.putExtra("unitPrice", nowOrderPrice)
                         intent.putExtra("count", this@FragmentBuy.orderCount)
                         getContent.launch(intent)
                     } else {

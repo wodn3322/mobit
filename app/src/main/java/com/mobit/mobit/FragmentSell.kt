@@ -253,7 +253,8 @@ class FragmentSell : Fragment() {
             // 코인 매도
             sellBtn.setOnClickListener {
                 orderCount.clearFocus()
-                if (this@FragmentSell.orderCount != 0.0 && this@FragmentSell.orderCount * this@FragmentSell.orderPrice >= 5000.0) {
+                val nowOrderPrice = this@FragmentSell.orderPrice
+                if (this@FragmentSell.orderCount != 0.0 && this@FragmentSell.orderCount * nowOrderPrice >= 5000.0) {
                     var coin: CoinInfo? = null
                     for (coinInfo in myViewModel.coinInfo.value!!) {
                         if (coinInfo.code == myViewModel.selectedCoin.value!!) {
@@ -262,10 +263,9 @@ class FragmentSell : Fragment() {
                         }
                     }
 
-
                     val flag = myViewModel.asset.value!!.canAskCoin(
                         coin!!.code,
-                        this@FragmentSell.orderPrice,
+                        nowOrderPrice,
                         this@FragmentSell.orderCount
                     )
                     if (flag) {
@@ -273,7 +273,7 @@ class FragmentSell : Fragment() {
                         intent.putExtra("type", 2)
                         intent.putExtra("code", coin!!.code)
                         intent.putExtra("name", coin!!.name)
-                        intent.putExtra("unitPrice", this@FragmentSell.orderPrice)
+                        intent.putExtra("unitPrice", nowOrderPrice)
                         intent.putExtra("count", this@FragmentSell.orderCount)
                         getContent.launch(intent)
                     } else {
