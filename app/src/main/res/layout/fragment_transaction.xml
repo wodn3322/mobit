@@ -100,12 +100,16 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:layout_weight="4"
+            android:autoSizeMaxTextSize="15sp"
+            android:autoSizeMinTextSize="6sp"
+            android:autoSizeStepGranularity="1sp"
+            android:autoSizeTextType="uniform"
             android:gravity="center"
+            android:maxLines="1"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:text="▼2,333,000"
-            android:textColor="@color/coin_list_blue"
-            android:textSize="15sp" />
+            android:textColor="@color/coin_list_blue" />
     </LinearLayout>
 
     <LinearLayout

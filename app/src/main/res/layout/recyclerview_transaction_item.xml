@@ -49,10 +49,11 @@
             android:layout_weight="2"
             android:autoSizeMaxTextSize="10sp"
             android:autoSizeMinTextSize="6sp"
-            android:autoSizeStepGranularity="4sp"
+            android:autoSizeStepGranularity="1sp"
             android:autoSizeTextType="uniform"
             android:background="@color/transaction_recyclerview_background_blue"
             android:gravity="left|center_vertical"
+            android:maxLines="1"
             android:paddingLeft="10dp"
             android:text="799,336.887"
             android:textColor="@color/upbit_light_gray" />

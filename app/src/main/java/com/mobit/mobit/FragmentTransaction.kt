@@ -18,6 +18,7 @@ import com.mobit.mobit.data.MyViewModel
 import com.mobit.mobit.data.OrderBook
 import com.mobit.mobit.databinding.FragmentTransactionBinding
 import java.text.DecimalFormat
+import kotlin.math.abs
 
 /*
 코인의 매수/매도 기능이 구현될 Fragment 입니다.
@@ -99,13 +100,13 @@ class FragmentTransaction : Fragment() {
                     val changeFormatter = DecimalFormat("###,###.##")
                     coinName.text = "${selectedCoin!!.name}(${selectedCoin!!.code.split('-')[1]})"
                     coinPrice.text = formatter.format(selectedCoin!!.price.realTimePrice)
-                    coinRate.text = changeFormatter.format(selectedCoin!!.price.changeRate)
+                    coinRate.text = changeFormatter.format(selectedCoin!!.price.changeRate * 100) + "%"
                     coinDiff.text = when (selectedCoin!!.price.change) {
                         "EVEN" -> ""
-                        "RISE" -> "▲"
-                        "FALL" -> "▼"
+                        "RISE" -> "▲ "
+                        "FALL" -> "▼ "
                         else -> ""
-                    } + changeFormatter.format(selectedCoin!!.price.changePrice)
+                    } + changeFormatter.format(abs(selectedCoin!!.price.changePrice))
 
                     setTextViewColor(selectedCoin!!)
                 }
