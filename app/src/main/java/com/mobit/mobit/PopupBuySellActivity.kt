@@ -38,11 +38,13 @@ class PopupBuySellActivity : Activity() {
                 1 -> {
                     title.setTextColor(Color.parseColor("#c34c34"))
                     confirmBtn.setTextColor(Color.parseColor("#c34c34"))
+                    title.text = "매수주문 확인"
                     confirmBtn.text = "매수확인"
                 }
                 2 -> {
                     title.setTextColor(Color.parseColor("#1262c5"))
                     confirmBtn.setTextColor(Color.parseColor("#1262c5"))
+                    title.text = "매도주문 확인"
                     confirmBtn.text = "매도확인"
                 }
             }
