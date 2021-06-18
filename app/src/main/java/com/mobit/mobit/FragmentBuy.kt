@@ -152,20 +152,23 @@ class FragmentBuy : Fragment() {
                     val krw = myViewModel.asset.value!!.krw
                     var canOrderCount: Double = 0.0
                     when (position) {
-                        // 최대
                         0 -> {
+
+                        }
+                        // 최대
+                        1 -> {
                             canOrderCount = krw / (this@FragmentBuy.orderPrice * 1.0005)
                         }
                         // 50%
-                        1 -> {
+                        2 -> {
                             canOrderCount = (krw / 2) / (this@FragmentBuy.orderPrice * 1.0005)
                         }
                         // 25%
-                        2 -> {
+                        3 -> {
                             canOrderCount = (krw / 4) / (this@FragmentBuy.orderPrice * 1.0005)
                         }
                         // 10%
-                        3 -> {
+                        4 -> {
                             canOrderCount = (krw / 10) / (this@FragmentBuy.orderPrice * 1.0005)
                         }
                         else -> {

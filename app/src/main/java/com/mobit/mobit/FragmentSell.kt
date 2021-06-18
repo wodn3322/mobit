@@ -176,20 +176,23 @@ class FragmentSell : Fragment() {
                     // selectedCoin은 null이 되므로 조건문을 추가해야 한다.
                     if (selectedCoin != null) {
                         when (position) {
-                            // 최대
                             0 -> {
+
+                            }
+                            // 최대
+                            1 -> {
                                 canOrderCount = selectedCoin!!.number
                             }
                             // 50%
-                            1 -> {
+                            2 -> {
                                 canOrderCount = selectedCoin!!.number / 2
                             }
                             // 25%
-                            2 -> {
+                            3 -> {
                                 canOrderCount = selectedCoin!!.number / 4
                             }
                             // 10%
-                            3 -> {
+                            4 -> {
                                 canOrderCount = selectedCoin!!.number / 10
                             }
                             else -> {

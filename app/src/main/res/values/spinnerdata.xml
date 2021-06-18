@@ -3,6 +3,7 @@
 
     <string name="orderCountSpinner_prompt">가능</string>
     <string-array name="orderCountSpinner">
+        <item>가능</item>
         <item>최대</item>
         <item>50%</item>
         <item>25%</item>
