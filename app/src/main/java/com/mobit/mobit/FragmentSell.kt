@@ -47,6 +47,12 @@ class FragmentSell : Fragment() {
 
     var coinAsset: CoinAsset? = null
 
+    var listener: OnPopupActivityControl? = null
+
+    interface OnPopupActivityControl {
+        fun onPopupActivityShow()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -272,6 +278,7 @@ class FragmentSell : Fragment() {
                         this@FragmentSell.orderCount
                     )
                     if (flag) {
+                        listener?.onPopupActivityShow()
                         val intent: Intent = Intent(context, PopupBuySellActivity::class.java)
                         intent.putExtra("type", 2)
                         intent.putExtra("code", coin!!.code)

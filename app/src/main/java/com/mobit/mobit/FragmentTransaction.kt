@@ -25,17 +25,10 @@ import kotlin.math.abs
  */
 class FragmentTransaction : Fragment() {
 
-    companion object {
-        const val FRAGMENT_BUY: Int = 100
-        const val FRAGMENT_SELL: Int = 200
-        const val FRAGMENT_COIN_INFO: Int = 300
-    }
-
     // Fragment 변수 시작
     val fragmentBuy: Fragment = FragmentBuy()
     val fragmentSell: Fragment = FragmentSell()
     val fragmentCoinInfo: Fragment = FragmentCoinInfo()
-    var fragmentState: Int = FRAGMENT_BUY
     // Fragment 변수 끝
 
     // UI 변수 시작
@@ -51,6 +44,8 @@ class FragmentTransaction : Fragment() {
         ArrayList()       // selectedCoin의 호가 정보를 갖는다. (내림차순으로 정렬되어 있음)
     // [0, 14] -> 매도 호가
     // [15, 29] -> 매수 호가
+
+    var resumeFlag: Boolean = true
 
     var listener: OnFragmentInteraction? = null      // MainActivity와 통신할 때 사용되는 interface
 
@@ -71,22 +66,28 @@ class FragmentTransaction : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        binding.buyAndSellGroup.check(R.id.coinBuyBtn)
-        fragmentState = FRAGMENT_BUY
-        replaceFragment(fragmentBuy)
-
-//        binding.recyclerView.scrollToPosition(6)
+        if (resumeFlag) {
+            binding.buyAndSellGroup.check(R.id.coinBuyBtn)
+            replaceFragment(fragmentBuy)
+        } else {
+            resumeFlag = true
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         listener?.orderBookThreadStop()
-//        myViewModel.setOrderBook(ArrayList<OrderBook>())
         myViewModel.orderBook.value!!.clear()
         doScrollVertically = true
     }
 
     fun init() {
+        (fragmentSell as FragmentSell).listener = object : FragmentSell.OnPopupActivityControl {
+            override fun onPopupActivityShow() {
+                resumeFlag = false
+            }
+        }
+
         myViewModel.coinInfo.observe(viewLifecycleOwner, Observer {
             for (coinInfo in myViewModel.coinInfo.value!!) {
                 if (coinInfo.code == myViewModel.selectedCoin.value!!) {
@@ -100,7 +101,8 @@ class FragmentTransaction : Fragment() {
                     val changeFormatter = DecimalFormat("###,###.##")
                     coinName.text = "${selectedCoin!!.name}(${selectedCoin!!.code.split('-')[1]})"
                     coinPrice.text = formatter.format(selectedCoin!!.price.realTimePrice)
-                    coinRate.text = changeFormatter.format(selectedCoin!!.price.changeRate * 100) + "%"
+                    coinRate.text =
+                        changeFormatter.format(selectedCoin!!.price.changeRate * 100) + "%"
                     coinDiff.text = when (selectedCoin!!.price.change) {
                         "EVEN" -> ""
                         "RISE" -> "▲ "
@@ -136,7 +138,6 @@ class FragmentTransaction : Fragment() {
         }
         adapter = FragmentTransactionAdapter(orderBook, selectedCoin!!.price.openPrice)
 
-        replaceFragment(fragmentBuy)
         binding.apply {
             recyclerView.layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -146,15 +147,12 @@ class FragmentTransaction : Fragment() {
                 override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
                     when (checkedId) {
                         R.id.coinBuyBtn -> {
-                            fragmentState = FRAGMENT_BUY
                             replaceFragment(fragmentBuy)
                         }
                         R.id.coinSellBtn -> {
-                            fragmentState = FRAGMENT_SELL
                             replaceFragment(fragmentSell)
                         }
                         R.id.coinInfoBtn -> {
-                            fragmentState = FRAGMENT_COIN_INFO
                             replaceFragment(fragmentCoinInfo)
                         }
                         else -> {
